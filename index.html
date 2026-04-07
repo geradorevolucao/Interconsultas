@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interconsulta - Gerador de Parecer</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f5;
+            padding: 16px;
+            margin: 0;
+            color: #333;
+        }
+        h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 4px;
+        }
+        h3 {
+            font-size: 15px;
+            color: #34495e;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        .card {
+            background-color: white;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 4px;
+            border: 1px solid #ccd1d9;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px; 
+            font-family: inherit;
+        }
+        textarea { resize: vertical; }
+        
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .row > div { flex: 1; min-width: 120px; }
+        
+        /* Sistema de Adição Flexível */
+        .input-com-botao { display: flex; gap: 8px; margin-top: 4px; }
+        .input-com-botao input, .input-com-botao select { margin-top: 0; flex: 1; }
+        .btn-add {
+            width: 44px; margin-top: 0; background-color: #3498db;
+            font-size: 24px; padding: 0; display: flex; align-items: center;
+            justify-content: center; color: white; border: none; border-radius: 6px; cursor: pointer;
+        }
+        .btn-add:hover { background-color: #2980b9; }
+
+        /* Estilos das Listas (Simples e Complexas) */
+        .lista-itens { margin-top: 12px; padding-left: 0; list-style: none; }
+        .lista-itens li {
+            background-color: #f8f9fa; border: 1px solid #e1e8ed;
+            border-radius: 6px; margin-bottom: 8px; padding: 10px;
+        }
+        .item-header { display: flex; justify-content: space-between; align-items: center; }
+        .item-titulo { font-weight: bold; color: #2c3e50; }
+        .botoes-acao { display: flex; gap: 6px; }
+        
+        .btn-acao {
+            padding: 6px 10px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; color: white;
+        }
+        .btn-detalhar { background-color: #f39c12; }
+        .btn-apagar { background-color: #e74c3c; }
+        
+        /* Área de Detalhamento Escondida */
+        .area-detalhe { margin-top: 10px; display: none; }
+        .area-detalhe textarea { font-size: 13px; background-color: #fff; }
+
+        /* Grade do Painel Laboratorial */
+        .lab-group {
+            border: 1px solid #e1e8ed; border-radius: 6px; padding: 10px; margin-bottom: 10px; background-color: #fafbfc;
+        }
+        .lab-group-title { font-size: 12px; font-weight: bold; color: #7f8c8d; text-transform: uppercase; margin-bottom: 6px; }
+        .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+        .lab-grid div label { font-size: 11px; margin-top: 0; text-align: center; }
+        .lab-grid div input { padding: 6px; text-align: center; font-size: 14px; }
+
+        /* Botões Finais */
+        .btn-gerar { 
+            width: 100%; padding: 16px; margin-top: 16px; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: bold; color: white; cursor: pointer; background-color: #27ae60; 
+        }
+        .btn-gerar:hover { background-color: #219653; }
+        .btn-copiar { 
+            width: 100%; padding: 14px; margin-top: 16px; border: none; border-radius: 6px;
+            font-size: 16px; font-weight: bold; color: white; cursor: pointer; background-color: #2980b9; display: none; 
+        } 
+        #resultadoArea { display: none; margin-top: 20px; }
+        #textoFinal { height: 500px; background-color: #f8f9fa; font-family: monospace; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Etapa 1: Identificação</h2>
+        <label>Nome do Paciente</label>
+        <input type="text" id="nome" placeholder="Ex: João da Silva">
+        
+        <div class="row">
+            <div><label>Leito</label><input type="text" id="leito" placeholder="Ex: UTI 05"></div>
+            <div><label>Idade</label><input type="number" id="idade" placeholder="Anos"></div>
+        </div>
+        
+        <div class="row">
+            <div>
+                <label>Especialidade Solicitada</label>
+                <select id="especialidade">
+                    <option value="Nefrologia">Interconsulta - Nefrologia</option>
+                    <option value="Gastroenterologia">Interconsulta - Gastroenterologia</option>
+                    <option value="Hematologia">Interconsulta - Hematologia</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div><label>Data de Internação Hosp.</label><input type="date" id="dataInternacao"></div>
+            <div><label>Início do Acompanhamento</label><input type="date" id="dataAcompanhamento"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 2: Situação e Contexto</h2>
+        
+        <label>Situação (Lista de Problemas)</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_problemas" placeholder="Ex: Lúpus Eritematoso Sistêmico" onkeypress="verificarEnter(event, 'complexa', 'problemas')">
+            <button class="btn-add" onclick="addComplexo('problemas')">+</button>
+        </div>
+        <ul id="ui_problemas" class="lista-itens"></ul>
+
+        <label style="margin-top: 20px;">Contexto (Anamnese / Resumo)</label>
+        <textarea id="contexto" rows="4" placeholder="Digite livremente a história da moléstia e motivo do parecer..."></textarea>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 3: História Pregressa</h2>
+        <p style="font-size: 12px; color: #666;">Dica: Adicione o item e clique em "Detalhar" para criar a cronologia/subitens.</p>
+        
+        <label>História Patológica</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_patologica" placeholder="Ex: HAS, DM2" onkeypress="verificarEnter(event, 'complexa', 'patologica')">
+            <button class="btn-add" onclick="addComplexo('patologica')">+</button>
+        </div>
+        <ul id="ui_patologica" class="lista-itens"></ul>
+
+        <label>História Social</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_social" placeholder="Ex: Tabagista" onkeypress="verificarEnter(event, 'complexa', 'social')">
+            <button class="btn-add" onclick="addComplexo('social')">+</button>
+        </div>
+        <ul id="ui_social" class="lista-itens"></ul>
+
+        <label>História Cirúrgica</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_cirurgica" placeholder="Ex: Apendicectomia" onkeypress="verificarEnter(event, 'complexa', 'cirurgica')">
+            <button class="btn-add" onclick="addComplexo('cirurgica')">+</button>
+        </div>
+        <ul id="ui_cirurgica" class="lista-itens"></ul>
+
+        <label>História Familiar</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_familiar" placeholder="Ex: Pai com DRC" onkeypress="verificarEnter(event, 'complexa', 'familiar')">
+            <button class="btn-add" onclick="addComplexo('familiar')">+</button>
+        </div>
+        <ul id="ui_familiar" class="lista-itens"></ul>
+
+        <label>História Medicamentosa (Uso Domiciliar)</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_medicamentosa" placeholder="Ex: Losartana 50mg" onkeypress="verificarEnter(event, 'complexa', 'medicamentosa')">
+            <button class="btn-add" onclick="addComplexo('medicamentosa')">+</button>
+        </div>
+        <ul id="ui_medicamentosa" class="lista-itens"></ul>
+
+        <label>Alergias</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_alergias" placeholder="Ex: Dipirona" onkeypress="verificarEnter(event, 'complexa', 'alergias')">
+            <button class="btn-add" onclick="addComplexo('alergias')">+</button>
+        </div>
+        <ul id="ui_alergias" class="lista-itens"></ul>
+
+        <label>Histórico de Internações</label>
+        <div class="input-com-botao">
+            <input type="text" id="in_internacoes" placeholder="Ex: 2024 - Internação por Sepse" onkeypress="verificarEnter(event, 'complexa', 'internacoes')">
+            <button class="btn-add" onclick="addComplexo('internacoes')">+</button>
+        </div>
+        <ul id="ui_internacoes" class="lista-itens"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 4: Exames</h2>
+        
+        <h3>Exames de Imagem</h3>
+        <div class="row">
+            <div style="flex: 2;"><label>Exame</label><input type="text" id="img_nome" placeholder="Ex: EcoTT"></div>
+            <div style="flex: 1;"><label>Data</label><input type="date" id="img_data"></div>
+        </div>
+        <label>Laudo</label>
+        <div class="input-com-botao">
+            <textarea id="img_laudo" rows="2" placeholder="Cole ou digite o laudo aqui..."></textarea>
+            <button class="btn-add" style="height: auto;" onclick="addImagem()">+</button>
+        </div>
+        <ul id="ui_imagens" class="lista-itens"></ul>
+
+        <h3 style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #ccc;">Exames Laboratoriais (Painel Diário)</h3>
+        <label>Data da Coleta</label>
+        <input type="date" id="lab_data" style="margin-bottom: 12px;">
+
+        <div class="lab-group"><div class="lab-group-title">Hemograma</div>
+            <div class="lab-grid">
+                <div><label>Hb</label><input type="text" id="l_Hb"></div>
+                <div><label>GL</label><input type="text" id="l_GL"></div>
+                <div><label>Plaq</label><input type="text" id="l_Plaq"></div>
+            </div>
+        </div>
+        
+        <div class="lab-group"><div class="lab-group-title">Renal / Eletrólitos</div>
+            <div class="lab-grid">
+                <div><label>Cr</label><input type="text" id="l_Cr"></div>
+                <div><label>Ur</label><input type="text" id="l_Ur"></div>
+                <div><label>Na</label><input type="text" id="l_Na"></div>
+                <div><label>K</label><input type="text" id="l_K"></div>
+                <div><label>Mg</label><input type="text" id="l_Mg"></div>
+                <div><label>Ca</label><input type="text" id="l_Ca"></div>
+                <div><label>P</label><input type="text" id="l_P"></div>
+            </div>
+        </div>
+
+        <div class="lab-group"><div class="lab-group-title">Hepático / Coagulação / Inflamatório</div>
+            <div class="lab-grid">
+                <div><label>TGO</label><input type="text" id="l_TGO"></div>
+                <div><label>TGP</label><input type="text" id="l_TGP"></div>
+                <div><label>GGT</label><input type="text" id="l_GGT"></div>
+                <div><label>FA</label><input type="text" id="l_FA"></div>
+                <div><label>BT</label><input type="text" id="l_BT"></div>
+                <div><label>BD</label><input type="text" id="l_BD"></div>
+                <div><label>BI</label><input type="text" id="l_BI"></div>
+                <div><label>Alb</label><input type="text" id="l_Alb"></div>
+                <div><label>RNI</label><input type="text" id="l_RNI"></div>
+                <div><label>TTpA</label><input type="text" id="l_TTpA"></div>
+                <div><label>PCR</label><input type="text" id="l_PCR"></div>
+            </div>
+        </div>
+
+        <div class="lab-group"><div class="lab-group-title">Gasometria</div>
+            <div class="lab-grid">
+                <div><label>Tipo</label><input type="text" id="l_GasoTipo" placeholder="A ou V"></div>
+                <div><label>pH</label><input type="text" id="l_pH"></div>
+                <div><label>pCO2</label><input type="text" id="l_pCO2"></div>
+                <div><label>HCO3</label><input type="text" id="l_HCO3"></div>
+                <div><label>BE</label><input type="text" id="l_BE"></div>
+                <div><label>paO2</label><input type="text" id="l_paO2"></div>
+                <div><label>sO2</label><input type="text" id="l_sO2"></div>
+                <div><label>Lac</label><input type="text" id="l_Lac"></div>
+            </div>
+        </div>
+
+        <div class="lab-group"><div class="lab-group-title">Urina e Outros</div>
+            <div class="row">
+                <div style="flex: 2;"><label>EAS (Ex: Dens, pH, prot...)</label><input type="text" id="l_EAS"></div>
+                <div style="flex: 1;"><label>Rel. P/C</label><input type="text" id="l_RelPC"></div>
+            </div>
+            <label>Outros Exames / Sorologias</label>
+            <div class="input-com-botao">
+                <input type="text" id="l_Outros" placeholder="Ex: FAN reagente...">
+                <button class="btn-add" onclick="addLaboratorio()">+</button>
+            </div>
+        </div>
+        <ul id="ui_laboratoriais" class="lista-itens"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 5: Avaliação Diária e Exame Físico</h2>
+        
+        <label>Gênero do Paciente</label>
+        <select id="genero" onchange="atualizarGenero()">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+        </select>
+
+        <label>Avaliação Clínica</label>
+        <textarea id="avaliacaoClinica" rows="4"></textarea>
+
+        <h3>Sinais Vitais</h3>
+        <div class="lab-grid" style="grid-template-columns: repeat(4, 1fr);">
+            <div><label>FC</label><input type="number" id="sv_FC" placeholder="bpm"></div>
+            <div><label>PA</label><input type="text" id="sv_PA" placeholder="mmHg"></div>
+            <div><label>SpO2</label><input type="number" id="sv_SpO2" placeholder="%"></div>
+            <div><label>FR</label><input type="number" id="sv_FR" placeholder="irpm"></div>
+            <div><label>GLASGOW</label><input type="number" id="sv_Glasgow"></div>
+            <div><label>Temp</label><input type="number" id="sv_Temp" placeholder="ºC"></div>
+            <div><label>TEC</label><input type="number" id="sv_TEC" placeholder="seg"></div>
+            <div><label>Diurese</label><input type="text" id="sv_Diurese" placeholder="ml"></div>
+        </div>
+
+        <h3>Exame Físico (Sistemas)</h3>
+        <label>Ectoscopia (Ect)</label>
+        <textarea id="ef_Ect" rows="2">Bom estado geral, corado, hidratado, acianótico, anictérico.</textarea>
+        
+        <label>Aparelho Respiratório (AR)</label>
+        <textarea id="ef_AR" rows="2">MV universalmente audível, sem ruídos adventícios.</textarea>
+        
+        <label>Aparelho Cardiovascular (ACV)</label>
+        <textarea id="ef_ACV" rows="2">Ritmo cardíaco regular em 2 tempos, bulhas normofonéticas, sem sopros.</textarea>
+        
+        <label>Abdome (ABD)</label>
+        <textarea id="ef_ABD" rows="2">Plano, flácido, indolor à palpação, RHA presentes.</textarea>
+        
+        <label>Membros Inferiores (MMII)</label>
+        <textarea id="ef_MMII" rows="2">Sem edemas, panturrilhas livres, pulsos presentes e simétricos.</textarea>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 6: Hipóteses Diagnósticas</h2>
+        <div class="input-com-botao">
+            <input type="text" id="in_hd" placeholder="Ex: Lesão Renal Aguda KDIGO 3" onkeypress="verificarEnter(event, 'simples', 'hd')">
+            <button class="btn-add" onclick="addSimples('hd')">+</button>
+        </div>
+        <ul id="ui_hd" class="lista-itens"></ul>
+    </div>
+
+    <div class="card">
+        <h2>Etapa 7: Condutas</h2>
+        <div class="input-com-botao">
+            <input type="text" id="in_condutas" placeholder="Ex: Solicito USG de vias urinárias" onkeypress="verificarEnter(event, 'simples', 'condutas')">
+            <button class="btn-add" onclick="addSimples('condutas')">+</button>
+        </div>
+        <ul id="ui_condutas" class="lista-itens"></ul>
+    </div>
+
+    <button class="btn-gerar" onclick="gerarParecer()">Gerar Parecer Completo</button>
+
+    <div id="resultadoArea" class="card">
+        <h2>Parecer Pronto</h2>
+        <textarea id="textoFinal" readonly></textarea>
+        <button class="btn-copiar" id="btnCopiar" onclick="copiarTexto()">Copiar para Área de Transferência</button>
+    </div>
+
+    <script>
+        // --- MEMÓRIA CENTRAL DO APLICATIVO ---
+        const bd = {
+            complexas: { problemas: [], patologica: [], social: [], cirurgica: [], familiar: [], medicamentosa: [], alergias: [], internacoes: [] },
+            simples: { imagens: [], laboratoriais: [], hd: [], condutas: [] }
+        };
+
+        // Textos Base de Gênero
+        const txtM = "Avalio paciente em leito, vígil, lúcido e orientado, comunicativo, estável hemodinamicamente, eupneico em ar ambiente. Diurese preservada. Sem queixas no momento.";
+        const txtF = "Avalio paciente em leito, vígil, lúcida e orientada, comunicativa, estável hemodinamicamente, eupneica em ar ambiente. Diurese preservada. Sem queixas no momento.";
+
+        // Inicializa o texto
+        window.onload = function() { atualizarGenero(); };
+
+        function atualizarGenero() {
+            const gen = document.getElementById('genero').value;
+            const campo = document.getElementById('avaliacaoClinica');
+            // Só substitui se o usuário não tiver apagado tudo ou se for os textos base
+            if(campo.value === "" || campo.value === txtM || campo.value === txtF) {
+                campo.value = gen === 'M' ? txtM : txtF;
+            }
+        }
+
+        function verificarEnter(e, tipo, chave) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                tipo === 'complexa' ? addComplexo(chave) : addSimples(chave);
+            }
+        }
+
+        // --- SISTEMA DE LISTAS COMPLEXAS (Com Detalhamento) ---
+        function addComplexo(chave) {
+            const input = document.getElementById('in_' + chave);
+            const val = input.value.trim();
+            if(val !== "") {
+                bd.complexas[chave].push({ titulo: val, detalhes: "" });
+                input.value = "";
+                renderComplexo(chave);
+            }
+        }
+
+        function renderComplexo(chave) {
+            const ui = document.getElementById('ui_' + chave);
+            ui.innerHTML = "";
+            bd.complexas[chave].forEach((item, index) => {
+                const li = document.createElement('li');
+                
+                // Cabeçalho (Titulo + Botoes)
+                const header = document.createElement('div');
+                header.className = "item-header";
+                
+                const span = document.createElement('span');
+                span.className = "item-titulo";
+                span.textContent = item.titulo;
+
+                const boxBotoes = document.createElement('div');
+                boxBotoes.className = "botoes-acao";
+
+                const btnEdit = document.createElement('button');
+                btnEdit.className = "btn-acao btn-detalhar";
+                btnEdit.textContent = "Detalhar";
+                
+                const btnDel = document.createElement('button');
+                btnDel.className = "btn-acao btn-apagar";
+                btnDel.textContent = "X";
+                btnDel.onclick = () => { bd.complexas[chave].splice(index, 1); renderComplexo(chave); };
+
+                // Área Escondida de Texto
+                const divDetalhe = document.createElement('div');
+                divDetalhe.className = "area-detalhe";
+                const textarea = document.createElement('textarea');
+                textarea.rows = 3;
+                textarea.placeholder = "Digite cada detalhe em uma nova linha...";
+                textarea.value = item.detalhes;
+                // Auto-save no texto
+                textarea.oninput = (e) => { bd.complexas[chave][index].detalhes = e.target.value; };
+
+                btnEdit.onclick = () => {
+                    divDetalhe.style.display = divDetalhe.style.display === "block" ? "none" : "block";
+                };
+
+                divDetalhe.appendChild(textarea);
+                boxBotoes.appendChild(btnEdit);
+                boxBotoes.appendChild(btnDel);
+                header.appendChild(span);
+                header.appendChild(boxBotoes);
+                li.appendChild(header);
+                li.appendChild(divDetalhe);
+                ui.appendChild(li);
+            });
+        }
+
+        // --- SISTEMA DE LISTAS SIMPLES ---
+        function addSimples(chave) {
+            const input = document.getElementById('in_' + chave);
+            const val = input.value.trim();
+            if(val !== "") {
+                bd.simples[chave].push(val);
+                input.value = "";
+                renderSimples(chave, 'ui_' + chave);
+            }
+        }
+
+        function renderSimples(chave, uiId) {
+            const ui = document.getElementById(uiId);
+            ui.innerHTML = "";
+            bd.simples[chave].forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = "item-header";
+                const span = document.createElement('span'); span.textContent = item;
+                const btnDel = document.createElement('button');
+                btnDel.className = "btn-acao btn-apagar"; btnDel.textContent = "X";
+                btnDel.onclick = () => { bd.simples[chave].splice(index, 1); renderSimples(chave, uiId); };
+                li.appendChild(span); li.appendChild(btnDel); ui.appendChild(li);
+            });
+        }
+
+        // --- SISTEMA DE EXAMES ---
+        function addImagem() {
+            const nome = document.getElementById('img_nome').value.trim();
+            const dataRaw = document.getElementById('img_data').value;
+            const laudo = document.getElementById('img_laudo').value.trim();
+            if(nome && laudo) {
+                let dataForm = dataRaw ? formatarData(dataRaw) : "Data NC";
+                const textoFinal = `${nome} (${dataForm}): ${laudo}`;
+                bd.simples.imagens.push(textoFinal);
+                document.getElementById('img_nome').value = ""; document.getElementById('img_data').value = ""; document.getElementById('img_laudo').value = "";
+                renderSimples('imagens', 'ui_imagens');
+            } else { alert("Preencha Nome do exame e Laudo."); }
+        }
+
+        function addLaboratorio() {
+            const dataRaw = document.getElementById('lab_data').value;
+            if(!dataRaw) { alert("Selecione a data da coleta."); return; }
+            
+            const ids = ['Hb','GL','Plaq','Cr','Ur','Na','K','Mg','Ca','P','TGO','TGP','GGT','FA','BT','BD','BI','Alb','RNI','TTpA','PCR','pH','pCO2','HCO3','BE','paO2','sO2','Lac'];
+            
+            let linha = formatarData(dataRaw) + ": ";
+            
+            // Adiciona Gaso Tipo se preenchido
+            const gasoTipo = document.getElementById('l_GasoTipo').value.trim();
+            if(gasoTipo) linha += `Gaso${gasoTipo} | `;
+
+            let examesAdicionados = 0;
+            ids.forEach(id => {
+                const val = document.getElementById('l_' + id).value.trim();
+                if(val) { linha += `${id} ${val} | `; examesAdicionados++; }
+            });
+
+            // Urina e Outros
+            const eas = document.getElementById('l_EAS').value.trim();
+            if(eas) { linha += `EAS (${eas}) | `; examesAdicionados++; }
+            
+            const rpc = document.getElementById('l_RelPC').value.trim();
+            if(rpc) { linha += `Rel P/C ${rpc} | `; examesAdicionados++; }
+            
+            const outros = document.getElementById('l_Outros').value.trim();
+            if(outros) { linha += `Outros: ${outros} | `; examesAdicionados++; }
+
+            if(examesAdicionados === 0) return;
+
+            // Remove o último " | "
+            linha = linha.slice(0, -3);
+            bd.simples.laboratoriais.push(linha);
+            
+            // Limpa todos os campos
+            ids.forEach(id => document.getElementById('l_' + id).value = "");
+            document.getElementById('l_GasoTipo').value = "";
+            document.getElementById('l_EAS').value = "";
+            document.getElementById('l_RelPC').value = "";
+            document.getElementById('l_Outros').value = "";
+            
+            renderSimples('laboratoriais', 'ui_laboratoriais');
+        }
+
+        // --- FUNÇÕES DE APOIO E DATA ---
+        function formatarData(dataInput) {
+            if (!dataInput) return "";
+            const partes = dataInput.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function calcDias(dataInput) {
+            if (!dataInput) return "NC";
+            const pts = dataInput.split('-');
+            const dAdmissao = new Date(pts[0], pts[1] - 1, pts[2]);
+            const hoje = new Date();
+            hoje.setHours(0,0,0,0); dAdmissao.setHours(0,0,0,0);
+            const diffDias = Math.floor((hoje - dAdmissao) / (1000 * 60 * 60 * 24));
+            return diffDias >= 0 ? diffDias + " dias" : "Futuro";
+        }
+
+        // Formata as listas complexas para o texto final
+        function printComplex(chave, vazio) {
+            if(bd.complexas[chave].length === 0) return vazio;
+            return bd.complexas[chave].map(item => {
+                let txt = "- " + item.titulo;
+                if(item.detalhes.trim() !== "") {
+                    let linhas = item.detalhes.split('\n');
+                    linhas.forEach(l => { if(l.trim()) txt += `\n  • ${l.trim()}`; });
+                }
+                return txt;
+            }).join('\n');
+        }
+
+        function printSimples(chave, vazio) {
+            if(bd.simples[chave].length === 0) return vazio;
+            return bd.simples[chave].map((item, index) => `${index + 1}. ${item}`).join('\n');
+        }
+
+        // --- GERAÇÃO DO TEXTO FINAL ---
+        function gerarParecer() {
+            // Etapa 1
+            const nome = document.getElementById('nome').value || "Não informado";
+            const leito = document.getElementById('leito').value || "---";
+            const idade = document.getElementById('idade').value || "---";
+            const esp = document.getElementById('especialidade').options[document.getElementById('especialidade').selectedIndex].text;
+            
+            const dtInt = document.getElementById('dataInternacao').value;
+            const tempoInt = calcDias(dtInt);
+            const strDtInt = dtInt ? formatarData(dtInt) : "NC";
+
+            const dtAcomp = document.getElementById('dataAcompanhamento').value;
+            let tempoAcomp = calcDias(dtAcomp);
+            if(tempoAcomp !== "NC" && tempoAcomp !== "Futuro") {
+                // Soma +1 porque o próprio dia inicial é o D1
+                tempoAcomp = parseInt(tempoAcomp) + 1 + "º dia"; 
+            }
+            const strDtAcomp = dtAcomp ? formatarData(dtAcomp) : "NC";
+
+            // Etapa 2
+            const strProblemas = printComplex('problemas', 'Nenhum problema listado');
+            const contexto = document.getElementById('contexto').value || "Nenhum contexto adicionado.";
+
+            // Etapa 3
+            const hPat = printComplex('patologica', 'Nega / Não relatado');
+            const hSoc = printComplex('social', 'Nega / Não relatado');
+            const hCir = printComplex('cirurgica', 'Nega / Não relatado');
+            const hFam = printComplex('familiar', 'Nega / Não relatado');
+            const hMed = printComplex('medicamentosa', 'Nega / Não relatado');
+            const hAle = printComplex('alergias', 'Nega / Não relatado');
+            const hInt = printComplex('internacoes', 'Nega / Não relatado');
+
+            // Etapa 4
+            const exImg = printSimples('imagens', 'Sem exames de imagem listados.');
+            // Para lab não uso número, apenas pulo linha
+            const exLab = bd.simples.laboratoriais.length > 0 ? bd.simples.laboratoriais.join('\n') : 'Sem exames laboratoriais.';
+
+            // Etapa 5
+            const ava = document.getElementById('avaliacaoClinica').value;
+            
+            // Sinais Vitais com Unidades Inteligentes
+            let sv = [];
+            let fFC = document.getElementById('sv_FC').value; if(fFC) sv.push(`FC ${fFC}bpm`);
+            let fPA = document.getElementById('sv_PA').value; if(fPA) sv.push(`PA ${fPA}mmHg`);
+            let fS = document.getElementById('sv_SpO2').value; if(fS) sv.push(`SpO2 ${fS}%`);
+            let fFR = document.getElementById('sv_FR').value; if(fFR) sv.push(`FR ${fFR}irpm`);
+            let fG = document.getElementById('sv_Glasgow').value; if(fG) sv.push(`GLASGOW ${fG}`);
+            let fT = document.getElementById('sv_Temp').value; if(fT) sv.push(`Temp ${fT}ºC`);
+            let fTEC = document.getElementById('sv_TEC').value; if(fTEC) sv.push(`TEC ${fTEC}seg`);
+            let fDiu = document.getElementById('sv_Diurese').value; if(fDiu) sv.push(`Diurese ${fDiu}ml`);
+            const strSV = sv.length > 0 ? sv.join(', ') : "Não aferidos.";
+
+            const ef_Ect = document.getElementById('ef_Ect').value;
+            const ef_AR = document.getElementById('ef_AR').value;
+            const ef_ACV = document.getElementById('ef_ACV').value;
+            const ef_ABD = document.getElementById('ef_ABD').value;
+            const ef_MMII = document.getElementById('ef_MMII').value;
+
+            // Etapa 6 e 7
+            const strHD = printSimples('hd', 'Sem hipóteses listadas.');
+            const strCond = printSimples('condutas', 'Sem condutas listadas.');
+
+            // MONTAGEM DO PARECER FINAL
+            const textoMontado = `--- ${esp.toUpperCase()} ---
+
+1. IDENTIFICAÇÃO
+Paciente: ${nome} | Idade: ${idade} | Leito: ${leito}
+Internação Hosp.: ${strDtInt} (${tempoInt})
+Início Acompanhamento: ${strDtAcomp} (Acompanhamento no ${tempoAcomp})
+
+2. SITUAÇÃO E CONTEXTO
+Contexto / Resumo:
+${contexto}
+
+Lista de Problemas Ativos:
+${strProblemas}
+
+3. HISTÓRICO PREGRESSO
+- H. Patológica:
+${hPat}
+- H. Social:
+${hSoc}
+- H. Cirúrgica:
+${hCir}
+- H. Familiar:
+${hFam}
+- Medicamentos Uso Domiciliar:
+${hMed}
+- Alergias:
+${hAle}
+- Histórico de Internações:
+${hInt}
+
+4. EXAMES
+Laboratoriais:
+${exLab}
+
+Imagem:
+${exImg}
+
+5. AVALIAÇÃO DIÁRIA E EXAME FÍSICO
+Avaliação Clínica:
+${ava}
+
+Sinais Vitais: ${strSV}
+
+Exame Físico:
+Ectoscopia: ${ef_Ect}
+AR: ${ef_AR}
+ACV: ${ef_ACV}
+ABD: ${ef_ABD}
+MMII: ${ef_MMII}
+
+6. HIPÓTESES DIAGNÓSTICAS
+${strHD}
+
+7. CONDUTAS / PLANO
+${strCond}
+
+----------------------------------------`;
+
+            document.getElementById('textoFinal').value = textoMontado;
+            document.getElementById('resultadoArea').style.display = 'block';
+            document.getElementById('btnCopiar').style.display = 'block';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        function copiarTexto() {
+            const ta = document.getElementById('textoFinal');
+            ta.select(); ta.setSelectionRange(0, 99999); 
+            navigator.clipboard.writeText(ta.value).then(() => {
+                alert("Parecer copiado com sucesso!");
+            });
+        }
+    </script>
+</body>
+</html>
