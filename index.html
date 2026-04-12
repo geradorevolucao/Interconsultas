@@ -91,8 +91,8 @@
 <body>
 
     <div class="top-bar">
-        <button id="btnVoltar" class="btn-voltar" onclick="navegar('screen-hub')">⬅ Voltar</button>
-        <span class="app-titulo" id="tituloApp">Hub Médico</span>
+        <button id="btnVoltar" class="btn-voltar">⬅ Voltar</button>
+        <span class="app-titulo" id="tituloApp">Meu Hub Médico</span>
     </div>
 
     <div id="screen-hub" class="screen">
@@ -108,16 +108,33 @@
     </div>
 
     <div id="screen-formulas" class="screen">
+        <div style="text-align: center; color: #7f8c8d; margin-top: 10px;">
+            <p>Selecione a categoria desejada:</p>
+        </div>
+        <div class="hub-grid">
+            <button class="hub-btn" onclick="navegar('screen-calculadoras')" style="background-color: #1abc9c;">🔢 CALCULADORAS<br><span style="font-size:11px;font-weight:normal;">TFG, FeNa, etc.</span></button>
+            <button class="hub-btn" onclick="navegar('screen-escores')" style="background-color: #e74c3c;">📊 ESCORES<br><span style="font-size:11px;font-weight:normal;">KDIGO, MELD, etc.</span></button>
+        </div>
+    </div>
+
+    <div id="screen-calculadoras" class="screen">
         <div class="placeholder-box">
-            <h2>Módulo de Fórmulas</h2>
-            <p>Área em construção! Aqui ficarão as calculadoras de TFG, FeNa, Escores MELD, KDIGO, etc.</p>
+            <h2>Calculadoras Médicas</h2>
+            <p>Área em construção! Aqui ficarão as calculadoras matemáticas.</p>
+        </div>
+    </div>
+
+    <div id="screen-escores" class="screen">
+        <div class="placeholder-box">
+            <h2>Escores Clínicos</h2>
+            <p>Área em construção! Aqui ficarão os sistemas de pontuação.</p>
         </div>
     </div>
 
     <div id="screen-prescricoes" class="screen">
         <div class="placeholder-box">
             <h2>Módulo de Prescrições</h2>
-            <p>Área em construção! Aqui ficarão os kits padrões e calculadoras de DVA/Sedoanalgesia.</p>
+            <p>Área em construção! Aqui ficarão os kits padrões e calculadoras de infusão.</p>
         </div>
     </div>
 
@@ -316,23 +333,33 @@
     </div>
 
     <script>
-        // --- NAVEGAÇÃO DO HUB ---
+        // --- NAVEGAÇÃO DO HUB (Inteligente) ---
+        const rotas = {
+            'screen-hub': { titulo: 'Meu Hub Médico', voltarPara: null },
+            'screen-evolucao': { titulo: 'Evolução e Parecer', voltarPara: 'screen-hub' },
+            'screen-formulas': { titulo: 'Fórmulas Médicas', voltarPara: 'screen-hub' },
+            'screen-calculadoras': { titulo: 'Calculadoras', voltarPara: 'screen-formulas' },
+            'screen-escores': { titulo: 'Escores Clínicos', voltarPara: 'screen-formulas' },
+            'screen-prescricoes': { titulo: 'Prescrições', voltarPara: 'screen-hub' },
+            'screen-pendencias': { titulo: 'Pendências', voltarPara: 'screen-hub' }
+        };
+
         function navegar(idTela) {
+            // Esconde todas as telas e mostra a selecionada
             document.querySelectorAll('.screen').forEach(tela => tela.style.display = 'none');
             document.getElementById(idTela).style.display = 'block';
             
+            // Puxa as informações da rota
+            const rota = rotas[idTela];
             const btnVoltar = document.getElementById('btnVoltar');
-            const titulo = document.getElementById('tituloApp');
+            document.getElementById('tituloApp').textContent = rota.titulo;
             
-            if(idTela === 'screen-hub') {
-                btnVoltar.style.display = 'none';
-                titulo.textContent = 'Meu Hub Médico';
-            } else {
+            // Lógica do botão Voltar
+            if(rota.voltarPara) {
                 btnVoltar.style.display = 'block';
-                if(idTela === 'screen-evolucao') titulo.textContent = 'Evolução e Parecer';
-                if(idTela === 'screen-formulas') titulo.textContent = 'Fórmulas Médicas';
-                if(idTela === 'screen-prescricoes') titulo.textContent = 'Prescrições';
-                if(idTela === 'screen-pendencias') titulo.textContent = 'Pendências';
+                btnVoltar.onclick = function() { navegar(rota.voltarPara); };
+            } else {
+                btnVoltar.style.display = 'none';
             }
             window.scrollTo(0, 0);
         }
@@ -345,7 +372,7 @@
 
         const txtM = "Avalio paciente em leito, vígil, lúcido e orientado, comunicativo, estável hemodinamicamente, eupneico em ar ambiente. Diurese preservada. Sem queixas no momento.";
         const txtF = "Avalio paciente em leito, vígil, lúcida e orientada, comunicativa, estável hemodinamicamente, eupneica em ar ambiente. Diurese preservada. Sem queixas no momento.";
-        window.onload = function() { atualizarGenero(); };
+        window.onload = function() { atualizarGenero(); navegar('screen-hub'); };
 
         function atualizarGenero() {
             const gen = document.getElementById('genero').value;
