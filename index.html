@@ -15,12 +15,20 @@
         .app-titulo { font-size: 18px; font-weight: bold; }
         .screen { display: none; padding: 16px; padding-bottom: 40px; }
         #screen-hub { display: block; } 
+        
         .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
         .hub-btn { background-color: #3498db; color: white; border: none; border-radius: 16px; padding: 40px 10px; font-size: 16px; font-weight: bold; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; }
         .hub-btn:active { transform: scale(0.96); }
         .hub-btn:nth-child(2) { background-color: #9b59b6; }
         .hub-btn:nth-child(3) { background-color: #e67e22; }
         .hub-btn:nth-child(4) { background-color: #7f8c8d; }
+        
+        /* Grid específica para Escores (Botões menores) */
+        .escores-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+        .btn-escore { background-color: #e74c3c; color: white; border: none; border-radius: 8px; padding: 16px 10px; font-size: 14px; font-weight: bold; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; }
+        .btn-escore.pronto { background-color: #c0392b; }
+        .btn-escore.espera { background-color: #e6a59e; cursor: not-allowed; }
+
         h2 { font-size: 18px; color: #2c3e50; margin-bottom: 12px; border-bottom: 2px solid #3498db; padding-bottom: 4px; }
         h3 { font-size: 15px; color: #34495e; margin-top: 16px; margin-bottom: 8px; }
         .card { background-color: white; padding: 16px; margin-bottom: 16px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
@@ -64,9 +72,7 @@
     </div>
 
     <div id="screen-hub" class="screen">
-        <div style="text-align: center; color: #7f8c8d; margin-top: 10px;">
-            <p>Selecione uma ferramenta para iniciar:</p>
-        </div>
+        <div style="text-align: center; color: #7f8c8d; margin-top: 10px;"><p>Selecione uma ferramenta para iniciar:</p></div>
         <div class="hub-grid">
             <button class="hub-btn" onclick="navegar('screen-evolucao')">📝 EVOLUÇÃO<br><span style="font-size:11px;font-weight:normal;">Interconsulta/Ambulatório</span></button>
             <button class="hub-btn" onclick="navegar('screen-formulas')">🧮 FÓRMULAS<br><span style="font-size:11px;font-weight:normal;">Calculadoras e Escores</span></button>
@@ -76,203 +82,230 @@
     </div>
 
     <div id="screen-formulas" class="screen">
-        <div style="text-align: center; color: #7f8c8d; margin-top: 10px;">
-            <p>Selecione a categoria desejada:</p>
-        </div>
         <div class="hub-grid">
             <button class="hub-btn" onclick="navegar('screen-calculadoras')" style="background-color: #1abc9c;">🔢 CALCULADORAS<br><span style="font-size:11px;font-weight:normal;">TFG, FeNa, etc.</span></button>
-            <button class="hub-btn" onclick="navegar('screen-escores')" style="background-color: #e74c3c;">📊 ESCORES<br><span style="font-size:11px;font-weight:normal;">KDIGO, MELD, etc.</span></button>
+            <button class="hub-btn" onclick="navegar('screen-escores')" style="background-color: #e74c3c;">📊 ESCORES<br><span style="font-size:11px;font-weight:normal;">20 Escores Clínicos</span></button>
         </div>
     </div>
 
     <div id="screen-calculadoras" class="screen">
-        
         <div class="card">
             <h2>TFG (CKD-EPI 2021)</h2>
-            <div class="row">
-                <div><label>Idade (anos)</label><input type="number" id="c_tfg_idade"></div>
-                <div><label>Sexo</label><select id="c_tfg_sexo"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
-            </div>
-            <div class="row">
-                <div><label>Creatinina (mg/dL)</label><input type="number" id="c_tfg_cr" step="0.01"></div>
-            </div>
+            <div class="row"><div><label>Idade (anos)</label><input type="number" id="c_tfg_idade"></div><div><label>Sexo</label><select id="c_tfg_sexo"><option value="M">Masculino</option><option value="F">Feminino</option></select></div></div>
+            <div class="row"><div><label>Creatinina (mg/dL)</label><input type="number" id="c_tfg_cr" step="0.01"></div></div>
             <button class="btn-gerar" style="padding: 12px; margin-top: 12px; background-color: #1abc9c;" onclick="calcularTFG()">Calcular TFG</button>
             <div id="res_tfg" class="resultado-calc"></div>
         </div>
-
         <div class="card">
             <h2>Anion Gap Sanguíneo</h2>
-            <div class="row">
-                <div><label>Sódio (Na+)</label><input type="number" id="c_ag_na"></div>
-                <div><label>Cloro (Cl-)</label><input type="number" id="c_ag_cl"></div>
-                <div><label>Bicarbonato</label><input type="number" id="c_ag_hco3"></div>
-            </div>
+            <div class="row"><div><label>Sódio (Na+)</label><input type="number" id="c_ag_na"></div><div><label>Cloro (Cl-)</label><input type="number" id="c_ag_cl"></div><div><label>Bicarbonato</label><input type="number" id="c_ag_hco3"></div></div>
             <button class="btn-gerar" style="padding: 12px; margin-top: 12px; background-color: #1abc9c;" onclick="calcularAG()">Calcular Anion Gap</button>
             <div id="res_ag" class="resultado-calc"></div>
         </div>
-
         <div class="card">
             <h2>Osmolalidade Sérica</h2>
-            <div class="row">
-                <div><label>Sódio (Na+)</label><input type="number" id="c_osm_na"></div>
-                <div><label>Glicose</label><input type="number" id="c_osm_gli"></div>
-                <div><label>Ureia</label><input type="number" id="c_osm_ur"></div>
-            </div>
+            <div class="row"><div><label>Sódio (Na+)</label><input type="number" id="c_osm_na"></div><div><label>Glicose</label><input type="number" id="c_osm_gli"></div><div><label>Ureia</label><input type="number" id="c_osm_ur"></div></div>
             <button class="btn-gerar" style="padding: 12px; margin-top: 12px; background-color: #1abc9c;" onclick="calcularOsm()">Calcular Osmolalidade</button>
             <div id="res_osm" class="resultado-calc"></div>
         </div>
-
     </div>
 
     <div id="screen-escores" class="screen">
-        <div class="placeholder-box">
-            <h2>Escores Clínicos</h2>
-            <p>Área em construção! Aqui ficarão os sistemas de pontuação.</p>
+        <div style="text-align: center; color: #7f8c8d;"><p>Selecione o Escore Clínico:</p></div>
+        <div class="escores-grid">
+            <button class="btn-escore pronto" onclick="navegar('e-light')">Critérios de Light</button>
+            <button class="btn-escore pronto" onclick="navegar('e-gasa')">GASA</button>
+            <button class="btn-escore pronto" onclick="navegar('e-kdigo')">KDIGO (LRA)</button>
+            <button class="btn-escore espera">Padua (Em breve)</button>
+            <button class="btn-escore espera">Caprini (Em breve)</button>
+            <button class="btn-escore espera">PPS (Em breve)</button>
+            <button class="btn-escore espera">SOFA (Em breve)</button>
+            <button class="btn-escore espera">NEWS (Em breve)</button>
+            <button class="btn-escore espera">GRACE (Em breve)</button>
+            <button class="btn-escore espera">TIMI (Em breve)</button>
+            <button class="btn-escore espera">Child Pugh (Em breve)</button>
+            <button class="btn-escore espera">Hunt Hess (Em breve)</button>
+            <button class="btn-escore espera">G. Blatchford (Em breve)</button>
+            <button class="btn-escore espera">Wells (Em breve)</button>
+            <button class="btn-escore espera">PESI (Em breve)</button>
+            <button class="btn-escore espera">NIHSS (Em breve)</button>
+            <button class="btn-escore espera">Duke (Em breve)</button>
+            <button class="btn-escore espera">CAM-ICU (Em breve)</button>
+            <button class="btn-escore espera">APACHE II (Em breve)</button>
+            <button class="btn-escore espera">West Haven (Em breve)</button>
         </div>
     </div>
 
-    <div id="screen-prescricoes" class="screen">
-        <div class="placeholder-box">
-            <h2>Módulo de Prescrições</h2>
-            <p>Área em construção! Aqui ficarão os kits padrões e calculadoras de infusão.</p>
+    <div id="e-light" class="screen">
+        <div class="card">
+            <h2>Critérios de Light (Derrame Pleural)</h2>
+            <p style="font-size: 13px; color: #666;">Diferenciação entre Transudato e Exsudato.</p>
+            <div class="row"><div><label>Proteína no Líquido (g/dL)</label><input type="number" id="l_prot_liq"></div><div><label>Proteína Sérica (g/dL)</label><input type="number" id="l_prot_ser"></div></div>
+            <div class="row"><div><label>LDH no Líquido (U/L)</label><input type="number" id="l_ldh_liq"></div><div><label>LDH Sérico (U/L)</label><input type="number" id="l_ldh_ser"></div></div>
+            <div class="row"><div><label>Limite Superior LDH Sérico (U/L)</label><input type="number" id="l_ldh_limit" placeholder="Ex: 250"></div></div>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularLight()">Calcular Light</button>
+            <div id="res_light" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
         </div>
     </div>
 
-    <div id="screen-pendencias" class="screen">
-        <div class="placeholder-box">
-            <h2>Checklist de Plantão</h2>
-            <p>Área em construção! Em breve.</p>
+    <div id="e-gasa" class="screen">
+        <div class="card">
+            <h2>GASA (Gradiente Albumina Soro-Ascite)</h2>
+            <div class="row">
+                <div><label>Albumina Sérica (g/dL)</label><input type="number" id="g_alb_ser" step="0.1"></div>
+                <div><label>Albumina Ascítica (g/dL)</label><input type="number" id="g_alb_asc" step="0.1"></div>
+            </div>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularGASA()">Calcular GASA</button>
+            <div id="res_gasa" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
         </div>
     </div>
+
+    <div id="e-kdigo" class="screen">
+        <div class="card">
+            <h2>Classificação KDIGO (LRA)</h2>
+            <div class="row">
+                <div><label>Cr Basal (mg/dL)</label><input type="number" id="k_cr_basal" step="0.1"></div>
+                <div><label>Cr Atual (mg/dL)</label><input type="number" id="k_cr_atual" step="0.1"></div>
+            </div>
+            <label>Critério de Débito Urinário (Opcional)</label>
+            <select id="k_diurese">
+                <option value="0">Não avaliado / Diurese mantida</option>
+                <option value="1">< 0.5 mL/kg/h por 6-12 horas</option>
+                <option value="2">< 0.5 mL/kg/h por ≥ 12 horas</option>
+                <option value="3">< 0.3 mL/kg/h por ≥ 24h OU Anúria ≥ 12h</option>
+            </select>
+            <label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-weight:normal;">
+                <input type="checkbox" id="k_trs" style="width:auto; margin:0;"> Paciente em Terapia de Substituição Renal (Diálise)?
+            </label>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularKDIGO()">Classificar KDIGO</button>
+            <div id="res_kdigo" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
+    </div>
+
+    <div id="screen-prescricoes" class="screen"><div class="placeholder-box"><h2>Prescrições</h2><p>Área em construção!</p></div></div>
+    <div id="screen-pendencias" class="screen"><div class="placeholder-box"><h2>Pendências</h2><p>Área em construção!</p></div></div>
 
     <div id="screen-evolucao" class="screen">
         <div class="card">
             <h2>Etapa 1: Identificação</h2>
             <label>Nome do Paciente</label><input type="text" id="nome" placeholder="Ex: João da Silva">
             <div class="row"><div><label>Leito</label><input type="text" id="leito"></div><div><label>Idade</label><input type="number" id="idade"></div></div>
-            <label>Especialidade</label>
-            <select id="especialidade">
-                <option value="Interconsulta - Nefrologia">Interconsulta - Nefrologia</option><option value="Interconsulta - Gastroenterologia">Interconsulta - Gastroenterologia</option><option value="Interconsulta - Hematologia">Interconsulta - Hematologia</option><option value="Ambulatório - Nefrologia">Ambulatório - Nefrologia</option><option value="Ambulatório - Gastroenterologia">Ambulatório - Gastroenterologia</option><option value="Ambulatório - Hematologia">Ambulatório - Hematologia</option>
-            </select>
+            <label>Especialidade</label><select id="especialidade"><option value="Interconsulta - Nefrologia">Interconsulta - Nefrologia</option><option value="Interconsulta - Gastroenterologia">Interconsulta - Gastroenterologia</option><option value="Interconsulta - Hematologia">Interconsulta - Hematologia</option><option value="Ambulatório - Nefrologia">Ambulatório - Nefrologia</option><option value="Ambulatório - Gastroenterologia">Ambulatório - Gastroenterologia</option><option value="Ambulatório - Hematologia">Ambulatório - Hematologia</option></select>
             <div class="row"><div><label>Data Int./1ª Consulta</label><input type="date" id="dataInternacao"></div><div><label>Data do Acompanhamento</label><input type="date" id="dataAcompanhamento"></div></div>
         </div>
-        <div class="card">
-            <h2>Etapa 2: Situação e Contexto</h2>
-            <label>Situação (Lista de Problemas)</label><div class="input-com-botao"><input type="text" id="in_problemas" onkeypress="verificarEnter(event, 'complexa', 'problemas')"><button class="btn-add" onclick="addComplexo('problemas')">+</button></div><ul id="ui_problemas" class="lista-itens"></ul>
-            <label style="margin-top: 20px;">Contexto (Anamnese / Resumo)</label><textarea id="contexto" rows="4"></textarea>
-        </div>
-        <div class="card">
-            <h2>Etapa 3: História Pregressa</h2>
-            <label>História Patológica</label><div class="input-com-botao"><input type="text" id="in_patologica" onkeypress="verificarEnter(event, 'complexa', 'patologica')"><button class="btn-add" onclick="addComplexo('patologica')">+</button></div><ul id="ui_patologica" class="lista-itens"></ul>
-            <label>História Social</label><div class="input-com-botao"><input type="text" id="in_social" onkeypress="verificarEnter(event, 'complexa', 'social')"><button class="btn-add" onclick="addComplexo('social')">+</button></div><ul id="ui_social" class="lista-itens"></ul>
-            <label>História Cirúrgica</label><div class="input-com-botao"><input type="text" id="in_cirurgica" onkeypress="verificarEnter(event, 'complexa', 'cirurgica')"><button class="btn-add" onclick="addComplexo('cirurgica')">+</button></div><ul id="ui_cirurgica" class="lista-itens"></ul>
-            <label>História Familiar</label><div class="input-com-botao"><input type="text" id="in_familiar" onkeypress="verificarEnter(event, 'complexa', 'familiar')"><button class="btn-add" onclick="addComplexo('familiar')">+</button></div><ul id="ui_familiar" class="lista-itens"></ul>
-            <label>Medicamentos Uso Domiciliar</label><div class="input-com-botao"><input type="text" id="in_medicamentosa" onkeypress="verificarEnter(event, 'complexa', 'medicamentosa')"><button class="btn-add" onclick="addComplexo('medicamentosa')">+</button></div><ul id="ui_medicamentosa" class="lista-itens"></ul>
-            <label>Alergias</label><div class="input-com-botao"><input type="text" id="in_alergias" onkeypress="verificarEnter(event, 'complexa', 'alergias')"><button class="btn-add" onclick="addComplexo('alergias')">+</button></div><ul id="ui_alergias" class="lista-itens"></ul>
-            <label>Histórico de Internações</label><div class="input-com-botao"><input type="text" id="in_internacoes" onkeypress="verificarEnter(event, 'complexa', 'internacoes')"><button class="btn-add" onclick="addComplexo('internacoes')">+</button></div><ul id="ui_internacoes" class="lista-itens"></ul>
-        </div>
+        <div class="card"><h2>Etapa 2: Situação e Contexto</h2><label>Situação (Lista de Problemas)</label><div class="input-com-botao"><input type="text" id="in_problemas" onkeypress="verificarEnter(event, 'complexa', 'problemas')"><button class="btn-add" onclick="addComplexo('problemas')">+</button></div><ul id="ui_problemas" class="lista-itens"></ul><label style="margin-top: 20px;">Contexto</label><textarea id="contexto" rows="4"></textarea></div>
+        <div class="card"><h2>Etapa 3: Histórico</h2><label>História Patológica</label><div class="input-com-botao"><input type="text" id="in_patologica" onkeypress="verificarEnter(event, 'complexa', 'patologica')"><button class="btn-add" onclick="addComplexo('patologica')">+</button></div><ul id="ui_patologica" class="lista-itens"></ul><label>Social</label><div class="input-com-botao"><input type="text" id="in_social" onkeypress="verificarEnter(event, 'complexa', 'social')"><button class="btn-add" onclick="addComplexo('social')">+</button></div><ul id="ui_social" class="lista-itens"></ul><label>Cirúrgica</label><div class="input-com-botao"><input type="text" id="in_cirurgica" onkeypress="verificarEnter(event, 'complexa', 'cirurgica')"><button class="btn-add" onclick="addComplexo('cirurgica')">+</button></div><ul id="ui_cirurgica" class="lista-itens"></ul><label>Familiar</label><div class="input-com-botao"><input type="text" id="in_familiar" onkeypress="verificarEnter(event, 'complexa', 'familiar')"><button class="btn-add" onclick="addComplexo('familiar')">+</button></div><ul id="ui_familiar" class="lista-itens"></ul><label>Meds</label><div class="input-com-botao"><input type="text" id="in_medicamentosa" onkeypress="verificarEnter(event, 'complexa', 'medicamentosa')"><button class="btn-add" onclick="addComplexo('medicamentosa')">+</button></div><ul id="ui_medicamentosa" class="lista-itens"></ul><label>Alergias</label><div class="input-com-botao"><input type="text" id="in_alergias" onkeypress="verificarEnter(event, 'complexa', 'alergias')"><button class="btn-add" onclick="addComplexo('alergias')">+</button></div><ul id="ui_alergias" class="lista-itens"></ul><label>Internações</label><div class="input-com-botao"><input type="text" id="in_internacoes" onkeypress="verificarEnter(event, 'complexa', 'internacoes')"><button class="btn-add" onclick="addComplexo('internacoes')">+</button></div><ul id="ui_internacoes" class="lista-itens"></ul></div>
         <div class="card">
             <h2>Etapa 4: Exames</h2>
-            <h3>Exames de Imagem</h3><div class="row"><div style="flex: 2;"><label>Exame</label><input type="text" id="img_nome"></div><div style="flex: 1;"><label>Data</label><input type="date" id="img_data"></div></div><label>Laudo</label><div class="input-com-botao"><textarea id="img_laudo" rows="2"></textarea><button class="btn-add" style="height: auto;" onclick="addImagem()">+</button></div><ul id="ui_imagens" class="lista-itens"></ul>
-            <h3 style="margin-top: 24px; border-top: 1px solid #ccc; padding-top:16px;">Exames Laboratoriais (Painel Diário)</h3><label>Data da Coleta</label><input type="date" id="lab_data" style="margin-bottom: 12px;">
-            <div class="lab-group"><div class="lab-group-title">Série Vermelha e Plaquetas</div><div class="lab-grid"><div><label>Hb</label><input type="text" id="l_Hb"></div><div><label>Ht</label><input type="text" id="l_Ht"></div><div><label>VCM</label><input type="text" id="l_VCM"></div><div><label>HCM</label><input type="text" id="l_HCM"></div><div><label>RDW</label><input type="text" id="l_RDW"></div><div><label>Plaq</label><input type="text" id="l_Plaq"></div></div></div>
-            <div class="lab-group"><div class="lab-group-title">Série Branca (Leucograma) <select id="l_DifToggle" onchange="toggleDif()" style="width:auto; padding:2px; font-size:12px; margin:0;"><option value="N">Sem Diferencial</option><option value="S">Com Diferencial</option></select></div><div class="lab-grid" style="margin-bottom: 8px;"><div><label>Leuco (GL)</label><input type="text" id="l_GL"></div></div><div class="lab-grid" id="grid_diferencial" style="display:none; background:#eee; padding:8px; border-radius:6px;"><div><label>Seg(%)</label><input type="text" id="l_Seg"></div><div><label>Neut</label><input type="text" id="l_Neut"></div><div><label>Bast</label><input type="text" id="l_Bast"></div><div><label>Meta</label><input type="text" id="l_Meta"></div><div><label>Eos</label><input type="text" id="l_Eos"></div><div><label>Baso</label><input type="text" id="l_Baso"></div><div><label>Linf</label><input type="text" id="l_Linf"></div><div><label>Mono</label><input type="text" id="l_Mono"></div></div></div>
-            <div class="lab-group"><div class="lab-group-title">Renal / Eletrólitos / Hepático</div><div class="lab-grid"><div><label>Cr</label><input type="text" id="l_Cr"></div><div><label>Ur</label><input type="text" id="l_Ur"></div><div><label>Na</label><input type="text" id="l_Na"></div><div><label>K</label><input type="text" id="l_K"></div><div><label>Mg</label><input type="text" id="l_Mg"></div><div><label>Ca</label><input type="text" id="l_Ca"></div><div><label>P</label><input type="text" id="l_P"></div><div><label>TGO</label><input type="text" id="l_TGO"></div><div><label>TGP</label><input type="text" id="l_TGP"></div><div><label>GGT</label><input type="text" id="l_GGT"></div><div><label>FA</label><input type="text" id="l_FA"></div><div><label>BT</label><input type="text" id="l_BT"></div><div><label>BD</label><input type="text" id="l_BD"></div><div><label>BI</label><input type="text" id="l_BI"></div><div><label>Alb</label><input type="text" id="l_Alb"></div><div><label>RNI</label><input type="text" id="l_RNI"></div><div><label>TTpA</label><input type="text" id="l_TTpA"></div><div><label>PCR</label><input type="text" id="l_PCR"></div></div></div>
-            <div class="lab-group"><div class="lab-group-title">Gasometria</div><div class="lab-grid"><div><label>Tipo</label><input type="text" id="l_GasoTipo" placeholder="A/V"></div><div><label>pH</label><input type="text" id="l_pH"></div><div><label>pCO2</label><input type="text" id="l_pCO2"></div><div><label>HCO3</label><input type="text" id="l_HCO3"></div><div><label>BE</label><input type="text" id="l_BE"></div><div><label>paO2</label><input type="text" id="l_paO2"></div><div><label>sO2</label><input type="text" id="l_sO2"></div><div><label>Lac</label><input type="text" id="l_Lac"></div></div></div>
-            <div class="lab-group"><div class="lab-group-title">Urina (EAS)</div><div class="lab-grid"><div><label>Asp/Cor</label><input type="text" id="e_Asp"></div><div><label>Dens</label><input type="text" id="e_Dens"></div><div><label>pH</label><input type="text" id="e_pH"></div><div><label>Prot</label><input type="text" id="e_Prot"></div><div><label>Glic</label><input type="text" id="e_Glic"></div><div><label>Cet</label><input type="text" id="e_Cet"></div><div><label>Bili</label><input type="text" id="e_Bili"></div><div><label>Leuc</label><input type="text" id="e_Leuc"></div><div><label>Hem</label><input type="text" id="e_Hem"></div><div><label>Cil</label><input type="text" id="e_Cil"></div><div><label>Flora</label><input type="text" id="e_Flo"></div><div><label>Crist</label><input type="text" id="e_Cri"></div></div></div>
-            <div class="lab-group"><div class="lab-group-title">Outros</div><div class="row"><div style="flex: 1;"><label>Rel. P/C</label><input type="text" id="l_RelPC"></div></div><label>Outros Exames / Sorologias</label><div class="input-com-botao"><input type="text" id="l_Outros" placeholder="Ex: FAN reagente..."><button class="btn-add" onclick="addLaboratorio()">+</button></div></div><ul id="ui_laboratoriais" class="lista-itens"></ul>
+            <h3>Imagem</h3><div class="row"><div style="flex: 2;"><label>Exame</label><input type="text" id="img_nome"></div><div style="flex: 1;"><label>Data</label><input type="date" id="img_data"></div></div><label>Laudo</label><div class="input-com-botao"><textarea id="img_laudo" rows="2"></textarea><button class="btn-add" style="height: auto;" onclick="addImagem()">+</button></div><ul id="ui_imagens" class="lista-itens"></ul>
+            <h3 style="margin-top: 24px; border-top: 1px solid #ccc; padding-top:16px;">Laboratoriais</h3><label>Data</label><input type="date" id="lab_data" style="margin-bottom: 12px;">
+            <div class="lab-group"><div class="lab-group-title">Série Vermelha e Plaq</div><div class="lab-grid"><div><label>Hb</label><input type="text" id="l_Hb"></div><div><label>Ht</label><input type="text" id="l_Ht"></div><div><label>VCM</label><input type="text" id="l_VCM"></div><div><label>HCM</label><input type="text" id="l_HCM"></div><div><label>RDW</label><input type="text" id="l_RDW"></div><div><label>Plaq</label><input type="text" id="l_Plaq"></div></div></div>
+            <div class="lab-group"><div class="lab-group-title">Série Branca <select id="l_DifToggle" onchange="toggleDif()"><option value="N">Sem Dif</option><option value="S">Com Dif</option></select></div><div class="lab-grid" style="margin-bottom: 8px;"><div><label>GL</label><input type="text" id="l_GL"></div></div><div class="lab-grid" id="grid_diferencial" style="display:none; background:#eee; padding:8px; border-radius:6px;"><div><label>Seg(%)</label><input type="text" id="l_Seg"></div><div><label>Neut</label><input type="text" id="l_Neut"></div><div><label>Bast</label><input type="text" id="l_Bast"></div><div><label>Meta</label><input type="text" id="l_Meta"></div><div><label>Eos</label><input type="text" id="l_Eos"></div><div><label>Baso</label><input type="text" id="l_Baso"></div><div><label>Linf</label><input type="text" id="l_Linf"></div><div><label>Mono</label><input type="text" id="l_Mono"></div></div></div>
+            <div class="lab-group"><div class="lab-group-title">Renal / Eletr / Hep</div><div class="lab-grid"><div><label>Cr</label><input type="text" id="l_Cr"></div><div><label>Ur</label><input type="text" id="l_Ur"></div><div><label>Na</label><input type="text" id="l_Na"></div><div><label>K</label><input type="text" id="l_K"></div><div><label>Mg</label><input type="text" id="l_Mg"></div><div><label>Ca</label><input type="text" id="l_Ca"></div><div><label>P</label><input type="text" id="l_P"></div><div><label>TGO</label><input type="text" id="l_TGO"></div><div><label>TGP</label><input type="text" id="l_TGP"></div><div><label>GGT</label><input type="text" id="l_GGT"></div><div><label>FA</label><input type="text" id="l_FA"></div><div><label>BT</label><input type="text" id="l_BT"></div><div><label>BD</label><input type="text" id="l_BD"></div><div><label>BI</label><input type="text" id="l_BI"></div><div><label>Alb</label><input type="text" id="l_Alb"></div><div><label>RNI</label><input type="text" id="l_RNI"></div><div><label>TTpA</label><input type="text" id="l_TTpA"></div><div><label>PCR</label><input type="text" id="l_PCR"></div></div></div>
+            <div class="lab-group"><div class="lab-group-title">Gaso</div><div class="lab-grid"><div><label>Tipo</label><input type="text" id="l_GasoTipo"></div><div><label>pH</label><input type="text" id="l_pH"></div><div><label>pCO2</label><input type="text" id="l_pCO2"></div><div><label>HCO3</label><input type="text" id="l_HCO3"></div><div><label>BE</label><input type="text" id="l_BE"></div><div><label>paO2</label><input type="text" id="l_paO2"></div><div><label>sO2</label><input type="text" id="l_sO2"></div><div><label>Lac</label><input type="text" id="l_Lac"></div></div></div>
+            <div class="lab-group"><div class="lab-group-title">EAS</div><div class="lab-grid"><div><label>Asp</label><input type="text" id="e_Asp"></div><div><label>Dens</label><input type="text" id="e_Dens"></div><div><label>pH</label><input type="text" id="e_pH"></div><div><label>Prot</label><input type="text" id="e_Prot"></div><div><label>Glic</label><input type="text" id="e_Glic"></div><div><label>Cet</label><input type="text" id="e_Cet"></div><div><label>Bili</label><input type="text" id="e_Bili"></div><div><label>Leuc</label><input type="text" id="e_Leuc"></div><div><label>Hem</label><input type="text" id="e_Hem"></div><div><label>Cil</label><input type="text" id="e_Cil"></div><div><label>Flora</label><input type="text" id="e_Flo"></div><div><label>Cri</label><input type="text" id="e_Cri"></div></div></div>
+            <div class="lab-group"><div class="row"><div style="flex: 1;"><label>Rel. P/C</label><input type="text" id="l_RelPC"></div></div><label>Outros Exames</label><div class="input-com-botao"><input type="text" id="l_Outros"><button class="btn-add" onclick="addLaboratorio()">+</button></div></div><ul id="ui_laboratoriais" class="lista-itens"></ul>
         </div>
         <div class="card">
-            <h2>Etapa 5: Avaliação Diária e Exame Físico</h2><label>Gênero do Paciente</label><select id="genero" onchange="atualizarGenero()"><option value="M">Masculino</option><option value="F">Feminino</option></select><label>Avaliação Clínica</label><textarea id="avaliacaoClinica" rows="4"></textarea>
-            <h3>Sinais Vitais</h3><div class="lab-grid" style="grid-template-columns: repeat(4, 1fr);"><div><label>FC</label><input type="number" id="sv_FC" placeholder="bpm"></div><div><label>PA</label><input type="text" id="sv_PA" placeholder="mmHg"></div><div><label>SpO2</label><input type="number" id="sv_SpO2" placeholder="%"></div><div><label>FR</label><input type="number" id="sv_FR" placeholder="irpm"></div><div><label>GLASGOW</label><input type="number" id="sv_Glasgow"></div><div><label>Temp</label><input type="number" id="sv_Temp" placeholder="ºC"></div><div><label>TEC</label><input type="number" id="sv_TEC" placeholder="seg"></div><div><label>Diurese</label><input type="text" id="sv_Diurese" placeholder="ml"></div></div>
-            <h3>Exame Físico (Sistemas)</h3><label>Ectoscopia (Ect)</label><textarea id="ef_Ect" rows="2">Bom estado geral, corado, hidratado, acianótico, anictérico.</textarea><label>Aparelho Respiratório (AR)</label><textarea id="ef_AR" rows="2">MV universalmente audível, sem ruídos adventícios.</textarea><label>Aparelho Cardiovascular (ACV)</label><textarea id="ef_ACV" rows="2">Ritmo cardíaco regular em 2 tempos, bulhas normofonéticas, sem sopros.</textarea><label>Abdome (ABD)</label><textarea id="ef_ABD" rows="2">Plano, flácido, indolor à palpação, RHA presentes.</textarea><label>Membros Inferiores (MMII)</label><textarea id="ef_MMII" rows="2">Sem edemas, panturrilhas livres, pulsos presentes e simétricos.</textarea>
+            <h2>Etapa 5: Avaliação</h2><label>Gênero</label><select id="genero" onchange="atualizarGenero()"><option value="M">Masculino</option><option value="F">Feminino</option></select><label>Avaliação</label><textarea id="avaliacaoClinica" rows="4"></textarea>
+            <h3>Sinais Vitais</h3><div class="lab-grid" style="grid-template-columns: repeat(4, 1fr);"><div><label>FC</label><input type="number" id="sv_FC"></div><div><label>PA</label><input type="text" id="sv_PA"></div><div><label>SpO2</label><input type="number" id="sv_SpO2"></div><div><label>FR</label><input type="number" id="sv_FR"></div><div><label>GLASGOW</label><input type="number" id="sv_Glasgow"></div><div><label>Temp</label><input type="number" id="sv_Temp"></div><div><label>TEC</label><input type="number" id="sv_TEC"></div><div><label>Diur</label><input type="text" id="sv_Diurese"></div></div>
+            <h3>Exame Físico</h3><label>Ect</label><textarea id="ef_Ect" rows="2">Bom estado geral, corado, hidratado, acianótico, anictérico.</textarea><label>AR</label><textarea id="ef_AR" rows="2">MV universalmente audível, sem ruídos adventícios.</textarea><label>ACV</label><textarea id="ef_ACV" rows="2">Ritmo cardíaco regular em 2 tempos, bulhas normofonéticas, sem sopros.</textarea><label>ABD</label><textarea id="ef_ABD" rows="2">Plano, flácido, indolor à palpação, RHA presentes.</textarea><label>MMII</label><textarea id="ef_MMII" rows="2">Sem edemas, panturrilhas livres, pulsos presentes e simétricos.</textarea>
         </div>
-        <div class="card"><h2>Etapa 6: Hipóteses Diagnósticas</h2><div class="input-com-botao"><input type="text" id="in_hd" onkeypress="verificarEnter(event, 'simples', 'hd')"><button class="btn-add" onclick="addSimples('hd')">+</button></div><ul id="ui_hd" class="lista-itens"></ul></div>
+        <div class="card"><h2>Etapa 6: HD</h2><div class="input-com-botao"><input type="text" id="in_hd" onkeypress="verificarEnter(event, 'simples', 'hd')"><button class="btn-add" onclick="addSimples('hd')">+</button></div><ul id="ui_hd" class="lista-itens"></ul></div>
         <div class="card"><h2>Etapa 7: Condutas</h2><div class="input-com-botao"><input type="text" id="in_condutas" onkeypress="verificarEnter(event, 'simples', 'condutas')"><button class="btn-add" onclick="addSimples('condutas')">+</button></div><ul id="ui_condutas" class="lista-itens"></ul></div>
         <button class="btn-gerar" onclick="gerarParecer()">Gerar Texto Completo</button>
-        <div id="resultadoArea" class="card"><h2>Texto Pronto</h2><textarea id="textoFinal" readonly></textarea><button class="btn-copiar" id="btnCopiar" onclick="copiarTexto()">Copiar para Área de Transferência</button></div>
+        <div id="resultadoArea" class="card"><textarea id="textoFinal" readonly></textarea><button class="btn-copiar" id="btnCopiar" onclick="copiarTexto()">Copiar</button></div>
     </div>
 
     <script>
-        // --- NAVEGAÇÃO DO HUB ---
+        // --- NAVEGAÇÃO EXPANDIDA ---
         const rotas = {
             'screen-hub': { titulo: 'Meu Hub Médico', voltarPara: null },
             'screen-evolucao': { titulo: 'Evolução e Parecer', voltarPara: 'screen-hub' },
-            'screen-formulas': { titulo: 'Fórmulas Médicas', voltarPara: 'screen-hub' },
+            'screen-formulas': { titulo: 'Fórmulas e Escores', voltarPara: 'screen-hub' },
             'screen-calculadoras': { titulo: 'Calculadoras', voltarPara: 'screen-formulas' },
             'screen-escores': { titulo: 'Escores Clínicos', voltarPara: 'screen-formulas' },
+            'e-light': { titulo: 'Critérios de Light', voltarPara: 'screen-escores' },
+            'e-gasa': { titulo: 'GASA', voltarPara: 'screen-escores' },
+            'e-kdigo': { titulo: 'KDIGO', voltarPara: 'screen-escores' },
             'screen-prescricoes': { titulo: 'Prescrições', voltarPara: 'screen-hub' },
             'screen-pendencias': { titulo: 'Pendências', voltarPara: 'screen-hub' }
         };
 
         function navegar(idTela) {
-            document.querySelectorAll('.screen').forEach(tela => tela.style.display = 'none');
+            document.querySelectorAll('.screen').forEach(t => t.style.display = 'none');
             document.getElementById(idTela).style.display = 'block';
-            const rota = rotas[idTela]; const btnVoltar = document.getElementById('btnVoltar');
+            const rota = rotas[idTela]; const btn = document.getElementById('btnVoltar');
             document.getElementById('tituloApp').textContent = rota.titulo;
-            if(rota.voltarPara) { btnVoltar.style.display = 'block'; btnVoltar.onclick = function() { navegar(rota.voltarPara); }; } else { btnVoltar.style.display = 'none'; }
+            if(rota.voltarPara) { btn.style.display = 'block'; btn.onclick = function() { navegar(rota.voltarPara); }; } else { btn.style.display = 'none'; }
             window.scrollTo(0, 0);
         }
 
-        // --- CALCULADORAS MÉDICAS ---
-        function calcularTFG() {
-            const age = parseFloat(document.getElementById('c_tfg_idade').value);
-            const cr = parseFloat(document.getElementById('c_tfg_cr').value);
-            const sex = document.getElementById('c_tfg_sexo').value;
-            const resBox = document.getElementById('res_tfg');
-            
-            if(!age || !cr) { resBox.innerText = "Preencha a Idade e a Creatinina."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; }
-            
-            // Fórmula CKD-EPI 2021 (Sem variável de raça)
-            const k = sex === 'F' ? 0.7 : 0.9;
-            const alpha = sex === 'F' ? -0.241 : -0.302;
-            const minCrK = Math.min(cr/k, 1);
-            const maxCrK = Math.max(cr/k, 1);
-            const femMul = sex === 'F' ? 1.012 : 1;
-            
-            const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * Math.pow(0.9938, age) * femMul;
-            
-            resBox.innerText = `TFG Estimada: ${egfr.toFixed(1)} mL/min/1.73m²`;
-            resBox.style.color = '#16a085'; resBox.style.display = 'block';
+        // --- MATEMÁTICA DOS NOVOS ESCORES ---
+        function calcularLight() {
+            const pLiq = parseFloat(document.getElementById('l_prot_liq').value); const pSer = parseFloat(document.getElementById('l_prot_ser').value);
+            const lLiq = parseFloat(document.getElementById('l_ldh_liq').value); const lSer = parseFloat(document.getElementById('l_ldh_ser').value);
+            const lLimit = parseFloat(document.getElementById('l_ldh_limit').value);
+            const res = document.getElementById('res_light');
+
+            if(!pLiq || !pSer || !lLiq || !lSer || !lLimit) { res.innerText = "Preencha todos os campos."; res.style.display='block'; return; }
+
+            const relProt = pLiq / pSer;
+            const relLdh = lLiq / lSer;
+            const limitLdh = lLiq > (0.66 * lLimit);
+
+            if(relProt > 0.5 || relLdh > 0.6 || limitLdh) {
+                res.innerText = "EXSUDATO\n(Preenche pelo menos 1 critério de Light)";
+            } else {
+                res.innerText = "TRANSUDATO\n(Não preenche nenhum critério de Light)";
+            }
+            res.style.display = 'block';
         }
 
-        function calcularAG() {
-            const na = parseFloat(document.getElementById('c_ag_na').value);
-            const cl = parseFloat(document.getElementById('c_ag_cl').value);
-            const hco3 = parseFloat(document.getElementById('c_ag_hco3').value);
-            const resBox = document.getElementById('res_ag');
+        function calcularGASA() {
+            const aSer = parseFloat(document.getElementById('g_alb_ser').value);
+            const aAsc = parseFloat(document.getElementById('g_alb_asc').value);
+            const res = document.getElementById('res_gasa');
 
-            if(isNaN(na) || isNaN(cl) || isNaN(hco3)) { resBox.innerText = "Preencha Na+, Cl- e Bicarbonato."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; }
+            if(isNaN(aSer) || isNaN(aAsc)) { res.innerText = "Preencha ambas as albuminas."; res.style.display='block'; return; }
 
-            const ag = na - (cl + hco3);
-            let diag = "";
-            if (ag > 12) diag = "(Aumentado)";
-            else if (ag < 8) diag = "(Reduzido)";
-            else diag = "(Normal)";
-
-            resBox.innerText = `Anion Gap: ${ag.toFixed(1)} mEq/L ${diag}`;
-            resBox.style.color = '#16a085'; resBox.style.display = 'block';
+            const gasa = aSer - aAsc;
+            let text = `GASA: ${gasa.toFixed(1)}\n`;
+            if(gasa >= 1.1) text += "Compatível com Hipertensão Portal (Ex: Cirrose, ICC).";
+            else text += "Não compatível com Hipertensão Portal (Ex: Carcinomatose, TB, Pâncreas).";
+            
+            res.innerText = text; res.style.display = 'block';
         }
 
-        function calcularOsm() {
-            const na = parseFloat(document.getElementById('c_osm_na').value);
-            const gli = parseFloat(document.getElementById('c_osm_gli').value);
-            const ur = parseFloat(document.getElementById('c_osm_ur').value);
-            const resBox = document.getElementById('res_osm');
+        function calcularKDIGO() {
+            const cBasal = parseFloat(document.getElementById('k_cr_basal').value);
+            const cAtual = parseFloat(document.getElementById('k_cr_atual').value);
+            const diur = parseInt(document.getElementById('k_diurese').value);
+            const trs = document.getElementById('k_trs').checked;
+            const res = document.getElementById('res_kdigo');
 
-            if(isNaN(na) || isNaN(gli) || isNaN(ur)) { resBox.innerText = "Preencha Na+, Glicose e Ureia."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; }
+            if(trs) { res.innerText = "KDIGO ESTÁGIO 3\n(Paciente em Terapia de Substituição Renal)"; res.style.display='block'; return; }
+            if(isNaN(cBasal) || isNaN(cAtual)) { res.innerText = "Preencha a Creatinina Basal e Atual."; res.style.display='block'; return; }
 
-            const osm = (2 * na) + (gli / 18) + (ur / 6);
-            let diag = "";
-            if (osm > 295) diag = "(Hiperosmolar)";
-            else if (osm < 275) diag = "(Hipo-osmolar)";
-            else diag = "(Normal)";
+            let estagioCr = 0;
+            if (cAtual >= (cBasal * 3.0) || cAtual >= 4.0) estagioCr = 3;
+            else if (cAtual >= (cBasal * 2.0)) estagioCr = 2;
+            else if (cAtual >= (cBasal * 1.5) || cAtual >= (cBasal + 0.3)) estagioCr = 1;
 
-            resBox.innerText = `Osmolalidade Sérica: ${osm.toFixed(1)} mOsm/kg ${diag}`;
-            resBox.style.color = '#16a085'; resBox.style.display = 'block';
+            const estagioFinal = Math.max(estagioCr, diur);
+
+            if(estagioFinal === 0) res.innerText = "Sem critérios para LRA pelo KDIGO no momento.";
+            else res.innerText = `KDIGO ESTÁGIO ${estagioFinal}\n(Baseado no pior critério entre Cr e Diurese)`;
+            
+            res.style.display = 'block';
         }
 
-        // --- LÓGICA DA EVOLUÇÃO (Mantida) ---
+        // --- CALCULADORAS ANTIGAS ---
+        function calcularTFG() { const age = parseFloat(document.getElementById('c_tfg_idade').value); const cr = parseFloat(document.getElementById('c_tfg_cr').value); const sex = document.getElementById('c_tfg_sexo').value; const resBox = document.getElementById('res_tfg'); if(!age || !cr) { resBox.innerText = "Preencha a Idade e a Creatinina."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const k = sex === 'F' ? 0.7 : 0.9; const alpha = sex === 'F' ? -0.241 : -0.302; const minCrK = Math.min(cr/k, 1); const maxCrK = Math.max(cr/k, 1); const femMul = sex === 'F' ? 1.012 : 1; const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * Math.pow(0.9938, age) * femMul; resBox.innerText = `TFG Estimada: ${egfr.toFixed(1)} mL/min/1.73m²`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
+        function calcularAG() { const na = parseFloat(document.getElementById('c_ag_na').value); const cl = parseFloat(document.getElementById('c_ag_cl').value); const hco3 = parseFloat(document.getElementById('c_ag_hco3').value); const resBox = document.getElementById('res_ag'); if(isNaN(na) || isNaN(cl) || isNaN(hco3)) { resBox.innerText = "Preencha Na+, Cl- e Bicarbonato."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const ag = na - (cl + hco3); let diag = ""; if (ag > 12) diag = "(Aumentado)"; else if (ag < 8) diag = "(Reduzido)"; else diag = "(Normal)"; resBox.innerText = `Anion Gap: ${ag.toFixed(1)} mEq/L ${diag}`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
+        function calcularOsm() { const na = parseFloat(document.getElementById('c_osm_na').value); const gli = parseFloat(document.getElementById('c_osm_gli').value); const ur = parseFloat(document.getElementById('c_osm_ur').value); const resBox = document.getElementById('res_osm'); if(isNaN(na) || isNaN(gli) || isNaN(ur)) { resBox.innerText = "Preencha Na+, Glicose e Ureia."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const osm = (2 * na) + (gli / 18) + (ur / 6); let diag = ""; if (osm > 295) diag = "(Hiperosmolar)"; else if (osm < 275) diag = "(Hipo-osmolar)"; else diag = "(Normal)"; resBox.innerText = `Osmolalidade: ${osm.toFixed(1)} mOsm/kg ${diag}`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
+
+        // --- LÓGICA DA EVOLUÇÃO (Omitida por espaço, mantive intacta no código HTML) ---
         const bd = { complexas: { problemas: [], patologica: [], social: [], cirurgica: [], familiar: [], medicamentosa: [], alergias: [], internacoes: [] }, simples: { imagens: [], laboratoriais: [], hd: [], condutas: [] } };
         const txtM = "Avalio paciente em leito, vígil, lúcido e orientado, comunicativo, estável hemodinamicamente, eupneico em ar ambiente. Diurese preservada. Sem queixas no momento.";
         const txtF = "Avalio paciente em leito, vígil, lúcida e orientada, comunicativa, estável hemodinamicamente, eupneica em ar ambiente. Diurese preservada. Sem queixas no momento.";
@@ -289,86 +322,12 @@
         function remSimples(chave, i) { bd.simples[chave].splice(i, 1); renderSimples(chave); }
         function addImagem() { const n = document.getElementById('img_nome').value.trim(); const d = document.getElementById('img_data').value; const l = document.getElementById('img_laudo').value.trim(); if(n && l) { bd.simples.imagens.push(`${n} (${d ? formatarData(d) : "Data NC"}): ${l}`); document.getElementById('img_nome').value = ""; document.getElementById('img_data').value = ""; document.getElementById('img_laudo').value = ""; renderSimples('imagens'); } }
         function toggleDif() { const s = document.getElementById('l_DifToggle').value; document.getElementById('grid_diferencial').style.display = s === 'S' ? 'grid' : 'none'; }
-        function addLaboratorio() {
-            const dataRaw = document.getElementById('lab_data').value; if(!dataRaw) { alert("Selecione a data da coleta."); return; }
-            let linha = formatarData(dataRaw) + ": "; let exAd = 0;
-            const hb = ['Hb','Ht','VCM','HCM','RDW','Plaq']; hb.forEach(id => { const val = document.getElementById('l_' + id).value.trim(); if(val) { linha += `${id} ${val} | `; exAd++; }});
-            const gl = document.getElementById('l_GL').value.trim();
-            if(gl) { let txtLeuco = `GL ${gl}`; if(document.getElementById('l_DifToggle').value === 'S') { let difs = []; const dIds = ['Seg','Neut','Bast','Meta','Eos','Baso','Linf','Mono']; dIds.forEach(d => { const v = document.getElementById('l_' + d).value.trim(); if(v) difs.push(`${d} ${v}`); }); if(difs.length > 0) txtLeuco += ` (${difs.join(', ')})`; } linha += txtLeuco + ` | `; exAd++; }
-            const geral = ['Cr','Ur','Na','K','Mg','Ca','P','TGO','TGP','GGT','FA','BT','BD','BI','Alb','RNI','TTpA','PCR','pH','pCO2','HCO3','BE','paO2','sO2','Lac'];
-            const gasoTipo = document.getElementById('l_GasoTipo').value.trim(); if(gasoTipo) linha += `Gaso${gasoTipo} | `;
-            geral.forEach(id => { const val = document.getElementById('l_' + id).value.trim(); if(val) { linha += `${id} ${val} | `; exAd++; }});
-            let strEas = []; const idsEas = ['Asp','Dens','pH','Prot','Glic','Cet','Bili','Leuc','Hem','Cil','Flo','Cri']; idsEas.forEach(e => { const val = document.getElementById('e_' + e).value.trim(); if(val) strEas.push(`${e} ${val}`); }); if(strEas.length > 0) { linha += `EAS (${strEas.join(', ')}) | `; exAd++; }
-            const rpc = document.getElementById('l_RelPC').value.trim(); if(rpc) { linha += `Rel P/C ${rpc} | `; exAd++; }
-            const outros = document.getElementById('l_Outros').value.trim(); if(outros) { linha += `Outros: ${outros} | `; exAd++; }
-            if(exAd === 0) return; bd.simples.laboratoriais.push(linha.slice(0, -3));
-            document.querySelectorAll('#screen-evolucao .lab-grid input').forEach(input => input.value = ""); document.getElementById('l_Outros').value = ""; renderSimples('laboratoriais');
-        }
+        function addLaboratorio() { const dataRaw = document.getElementById('lab_data').value; if(!dataRaw) { alert("Selecione a data."); return; } let linha = formatarData(dataRaw) + ": "; let exAd = 0; const hb = ['Hb','Ht','VCM','HCM','RDW','Plaq']; hb.forEach(id => { const val = document.getElementById('l_' + id).value.trim(); if(val) { linha += `${id} ${val} | `; exAd++; }}); const gl = document.getElementById('l_GL').value.trim(); if(gl) { let txtLeuco = `GL ${gl}`; if(document.getElementById('l_DifToggle').value === 'S') { let difs = []; const dIds = ['Seg','Neut','Bast','Meta','Eos','Baso','Linf','Mono']; dIds.forEach(d => { const v = document.getElementById('l_' + d).value.trim(); if(v) difs.push(`${d} ${v}`); }); if(difs.length > 0) txtLeuco += ` (${difs.join(', ')})`; } linha += txtLeuco + ` | `; exAd++; } const geral = ['Cr','Ur','Na','K','Mg','Ca','P','TGO','TGP','GGT','FA','BT','BD','BI','Alb','RNI','TTpA','PCR','pH','pCO2','HCO3','BE','paO2','sO2','Lac']; const gasoTipo = document.getElementById('l_GasoTipo').value.trim(); if(gasoTipo) linha += `Gaso${gasoTipo} | `; geral.forEach(id => { const val = document.getElementById('l_' + id).value.trim(); if(val) { linha += `${id} ${val} | `; exAd++; }}); let strEas = []; const idsEas = ['Asp','Dens','pH','Prot','Glic','Cet','Bili','Leuc','Hem','Cil','Flo','Cri']; idsEas.forEach(e => { const val = document.getElementById('e_' + e).value.trim(); if(val) strEas.push(`${e} ${val}`); }); if(strEas.length > 0) { linha += `EAS (${strEas.join(', ')}) | `; exAd++; } const rpc = document.getElementById('l_RelPC').value.trim(); if(rpc) { linha += `Rel P/C ${rpc} | `; exAd++; } const outros = document.getElementById('l_Outros').value.trim(); if(outros) { linha += `Outros: ${outros} | `; exAd++; } if(exAd === 0) return; bd.simples.laboratoriais.push(linha.slice(0, -3)); document.querySelectorAll('#screen-evolucao .lab-grid input').forEach(input => input.value = ""); document.getElementById('l_Outros').value = ""; renderSimples('laboratoriais'); }
         function formatarData(d) { const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
         function calcDias(d) { if (!d) return "NC"; const dAd = new Date(d.split('-')[0], d.split('-')[1] - 1, d.split('-')[2]); const hj = new Date(); hj.setHours(0,0,0,0); dAd.setHours(0,0,0,0); const diff = Math.floor((hj - dAd) / 86400000); return diff >= 0 ? diff + " dias" : "Futuro"; }
         function pComp(chave, v) { if(bd.complexas[chave].length === 0) return v; return bd.complexas[chave].map(i => { let t = "- " + i.titulo; if(i.detalhes.trim()) t += "\n  • " + i.detalhes.trim().split('\n').filter(l=>l).join('\n  • '); return t; }).join('\n'); }
         function pSimp(chave, v) { return bd.simples[chave].length === 0 ? v : bd.simples[chave].map((i, idx) => `${idx + 1}. ${i}`).join('\n'); }
-        function gerarParecer() {
-            const esp = document.getElementById('especialidade').options[document.getElementById('especialidade').selectedIndex].text.toUpperCase();
-            let dtAcomp = document.getElementById('dataAcompanhamento').value; let tAcomp = calcDias(dtAcomp); if(tAcomp !== "NC" && tAcomp !== "Futuro") tAcomp = (parseInt(tAcomp) + 1) + "º dia";
-            let sv = []; const ids = ['FC','PA','SpO2','FR','Glasgow','Temp','TEC','Diurese']; const un = ['bpm','mmHg','%','irpm','','ºC','seg','ml']; ids.forEach((id, i) => { const v = document.getElementById('sv_' + id).value; if(v) sv.push(`${id.toUpperCase()} ${v}${un[i]}`); });
-            const txt = `--- ${esp} ---
-
-1. IDENTIFICAÇÃO
-Paciente: ${document.getElementById('nome').value || "Não informado"} | Idade: ${document.getElementById('idade').value || "---"} | Leito: ${document.getElementById('leito').value || "---"}
-Data Int./1ª Cons.: ${document.getElementById('dataInternacao').value ? formatarData(document.getElementById('dataInternacao').value) : "NC"} (${calcDias(document.getElementById('dataInternacao').value)})
-Início Acompanhamento: ${dtAcomp ? formatarData(dtAcomp) : "NC"} (Acompanhamento no ${tAcomp})
-
-2. SITUAÇÃO E CONTEXTO
-Contexto / Resumo:
-${document.getElementById('contexto').value || "Nenhum contexto adicionado."}
-
-Lista de Problemas Ativos:
-${pComp('problemas', 'Nenhum problema listado')}
-
-3. HISTÓRICO PREGRESSO
-- H. Patológica:
-${pComp('patologica', 'Nega / Não relatado')}
-- H. Social:
-${pComp('social', 'Nega / Não relatado')}
-- H. Cirúrgica:
-${pComp('cirurgica', 'Nega / Não relatado')}
-- H. Familiar:
-${pComp('familiar', 'Nega / Não relatado')}
-- Medicamentos Uso Domiciliar:
-${pComp('medicamentosa', 'Nega / Não relatado')}
-- Alergias:
-${pComp('alergias', 'Nega / Não relatado')}
-- Histórico de Internações:
-${pComp('internacoes', 'Nega / Não relatado')}
-
-4. EXAMES
-Laboratoriais:
-${bd.simples.laboratoriais.length > 0 ? bd.simples.laboratoriais.join('\n') : 'Sem exames laboratoriais.'}
-
-Imagem:
-${pSimp('imagens', 'Sem exames de imagem listados.')}
-
-5. AVALIAÇÃO DIÁRIA E EXAME FÍSICO
-Avaliação Clínica:
-${document.getElementById('avaliacaoClinica').value}
-
-Sinais Vitais: ${sv.length > 0 ? sv.join(', ') : "Não aferidos."}
-
-Exame Físico:
-Ectoscopia: ${document.getElementById('ef_Ect').value}
-AR: ${document.getElementById('ef_AR').value}
-ACV: ${document.getElementById('ef_ACV').value}
-ABD: ${document.getElementById('ef_ABD').value}
-MMII: ${document.getElementById('ef_MMII').value}
-
-6. HIPÓTESES DIAGNÓSTICAS
-${pSimp('hd', 'Sem hipóteses listadas.')}
-
-7. CONDUTAS / PLANO
-${pSimp('condutas', 'Sem condutas listadas.')}`;
-            document.getElementById('textoFinal').value = txt; document.getElementById('resultadoArea').style.display = 'block'; document.getElementById('btnCopiar').style.display = 'block'; document.getElementById('resultadoArea').scrollIntoView({behavior: "smooth"});
-        }
+        function gerarParecer() { const esp = document.getElementById('especialidade').options[document.getElementById('especialidade').selectedIndex].text.toUpperCase(); let dtAcomp = document.getElementById('dataAcompanhamento').value; let tAcomp = calcDias(dtAcomp); if(tAcomp !== "NC" && tAcomp !== "Futuro") tAcomp = (parseInt(tAcomp) + 1) + "º dia"; let sv = []; const ids = ['FC','PA','SpO2','FR','Glasgow','Temp','TEC','Diurese']; const un = ['bpm','mmHg','%','irpm','','ºC','seg','ml']; ids.forEach((id, i) => { const v = document.getElementById('sv_' + id).value; if(v) sv.push(`${id.toUpperCase()} ${v}${un[i]}`); }); const txt = `--- ${esp} ---\n\n1. IDENTIFICAÇÃO\nPaciente: ${document.getElementById('nome').value || "Não informado"} | Idade: ${document.getElementById('idade').value || "---"} | Leito: ${document.getElementById('leito').value || "---"}\nData Int./1ª Cons.: ${document.getElementById('dataInternacao').value ? formatarData(document.getElementById('dataInternacao').value) : "NC"} (${calcDias(document.getElementById('dataInternacao').value)})\nInício Acompanhamento: ${dtAcomp ? formatarData(dtAcomp) : "NC"} (Acompanhamento no ${tAcomp})\n\n2. SITUAÇÃO E CONTEXTO\nContexto / Resumo:\n${document.getElementById('contexto').value || "Nenhum contexto adicionado."}\n\nLista de Problemas Ativos:\n${pComp('problemas', 'Nenhum problema listado')}\n\n3. HISTÓRICO PREGRESSO\n- H. Patológica:\n${pComp('patologica', 'Nega / Não relatado')}\n- H. Social:\n${pComp('social', 'Nega / Não relatado')}\n- H. Cirúrgica:\n${pComp('cirurgica', 'Nega / Não relatado')}\n- H. Familiar:\n${pComp('familiar', 'Nega / Não relatado')}\n- Medicamentos Uso Domiciliar:\n${pComp('medicamentosa', 'Nega / Não relatado')}\n- Alergias:\n${pComp('alergias', 'Nega / Não relatado')}\n- Histórico de Internações:\n${pComp('internacoes', 'Nega / Não relatado')}\n\n4. EXAMES\nLaboratoriais:\n${bd.simples.laboratoriais.length > 0 ? bd.simples.laboratoriais.join('\n') : 'Sem exames laboratoriais.'}\n\nImagem:\n${pSimp('imagens', 'Sem exames de imagem listados.')}\n\n5. AVALIAÇÃO DIÁRIA E EXAME FÍSICO\nAvaliação Clínica:\n${document.getElementById('avaliacaoClinica').value}\n\nSinais Vitais: ${sv.length > 0 ? sv.join(', ') : "Não aferidos."}\n\nExame Físico:\nEctoscopia: ${document.getElementById('ef_Ect').value}\nAR: ${document.getElementById('ef_AR').value}\nACV: ${document.getElementById('ef_ACV').value}\nABD: ${document.getElementById('ef_ABD').value}\nMMII: ${document.getElementById('ef_MMII').value}\n\n6. HIPÓTESES DIAGNÓSTICAS\n${pSimp('hd', 'Sem hipóteses listadas.')}\n\n7. CONDUTAS / PLANO\n${pSimp('condutas', 'Sem condutas listadas.')}`; document.getElementById('textoFinal').value = txt; document.getElementById('resultadoArea').style.display = 'block'; document.getElementById('btnCopiar').style.display = 'block'; document.getElementById('resultadoArea').scrollIntoView({behavior: "smooth"}); }
         function copiarTexto() { const ta = document.getElementById('textoFinal'); ta.select(); navigator.clipboard.writeText(ta.value).then(() => alert("Copiado com sucesso!")); }
     </script>
 </body>
