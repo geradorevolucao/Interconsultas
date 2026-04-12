@@ -116,10 +116,10 @@
             <button class="btn-escore pronto" onclick="navegar('e-light')">Critérios de Light</button>
             <button class="btn-escore pronto" onclick="navegar('e-gasa')">GASA</button>
             <button class="btn-escore pronto" onclick="navegar('e-kdigo')">KDIGO (LRA)</button>
-            <button class="btn-escore espera">Padua (Em breve)</button>
-            <button class="btn-escore espera">Caprini (Em breve)</button>
-            <button class="btn-escore espera">PPS (Em breve)</button>
-            <button class="btn-escore espera">SOFA (Em breve)</button>
+            <button class="btn-escore pronto" onclick="navegar('e-padua')">Padua</button>
+            <button class="btn-escore pronto" onclick="navegar('e-caprini')">Caprini</button>
+            <button class="btn-escore pronto" onclick="navegar('e-pps')">PPS</button>
+            <button class="btn-escore pronto" onclick="navegar('e-sofa')">SOFA</button>
             <button class="btn-escore espera">NEWS (Em breve)</button>
             <button class="btn-escore espera">GRACE (Em breve)</button>
             <button class="btn-escore espera">TIMI (Em breve)</button>
@@ -179,6 +179,150 @@
             </label>
             <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularKDIGO()">Classificar KDIGO</button>
             <div id="res_kdigo" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
+    </div>
+    
+    <div id="e-padua" class="screen">
+        <div class="card">
+            <h2>Escore de Padua (TEV Clínico)</h2>
+            <p style="font-size: 13px; color: #666;">Selecione os fatores presentes:</p>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="3"> Câncer Ativo (+3)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="3"> História prévia de TEV (+3)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="3"> Mobilidade reduzida (repouso no leito) (+3)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="3"> Trombofilia conhecida (+3)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="2"> Trauma recente ou Cirurgia (≤ 1 mês) (+2)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> Idade ≥ 70 anos (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> Insuficiência Cardíaca ou Respiratória (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> IAM ou AVC isquêmico agudo (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> Infecção aguda ou distúrbio reumatológico (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> Obesidade (IMC ≥ 30) (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-padua" value="1"> Tratamento hormonal em curso (+1)</label>
+            </div>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularPadua()">Calcular Padua</button>
+            <div id="res_padua" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
+    </div>
+
+    <div id="e-caprini" class="screen">
+        <div class="card">
+            <h2>Escore de Caprini (TEV Cirúrgico)</h2>
+            <p style="font-size: 13px; color: #666;">Fatores de risco divididos por peso. Selecione todos que se aplicam:</p>
+            
+            <h3 style="font-size: 13px;">Fatores de 5 Pontos</h3>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="5"> AVC, Artroplastia eletiva, Trauma múltiplo ou Lesão medular (< 1 mês)</label>
+            </div>
+
+            <h3 style="font-size: 13px;">Fatores de 3 Pontos</h3>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="3"> Idade ≥ 75 anos</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="3"> História pessoal ou familiar de TEV / Trombofilia</label>
+            </div>
+
+            <h3 style="font-size: 13px;">Fatores de 2 Pontos</h3>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="2"> Idade 60-74 anos</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="2"> Cirurgia de grande porte (> 45 min)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="2"> Câncer (presente ou prévio)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="2"> Paciente acamado (> 72h) ou Acesso venoso central</label>
+            </div>
+
+            <h3 style="font-size: 13px;">Fatores de 1 Ponto</h3>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="1"> Idade 41-59 anos</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="1"> Pequena cirurgia, IMC > 25, Edema de MMII, Varizes</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="1"> Gravidez, Puerpério, Anticoncepcional ou TRH</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-caprini" value="1"> Sepse, Doença Pulmonar grave, IAM ou ICC</label>
+            </div>
+
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularCaprini()">Calcular Caprini</button>
+            <div id="res_caprini" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
+    </div>
+
+    <div id="e-pps" class="screen">
+        <div class="card">
+            <h2>Palliative Performance Scale (PPS)</h2>
+            <label>Nível Funcional do Paciente</label>
+            <select id="s_pps" style="margin-top: 10px;">
+                <option value="100">100% - Totalmente deambulatório, hígido</option>
+                <option value="90">90% - Deambulatório, evidência de doença leve</option>
+                <option value="80">80% - Deambulatório, evidência de doença</option>
+                <option value="70">70% - Deambulatório reduzido, autocuidado mantido</option>
+                <option value="60">60% - Deambulatório reduzido, precisa de auxílio ocasional</option>
+                <option value="50">50% - Senta/Deita a maior parte, auxílio considerável</option>
+                <option value="40">40% - Principalmente deitado, auxílio principal</option>
+                <option value="30">30% - Totalmente acamado, cuidado total, sonolento</option>
+                <option value="20">20% - Acamado, cuidado total, goles de água</option>
+                <option value="10">10% - Acamado, comatoso, cuidados de boca</option>
+            </select>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularPPS()">Avaliar PPS</button>
+            <div id="res_pps" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
+    </div>
+
+    <div id="e-sofa" class="screen">
+        <div class="card">
+            <h2>Escore SOFA (Sepse)</h2>
+            <p style="font-size: 13px; color: #666;">Avaliação de disfunção orgânica (Sepsis-3). Selecione a pior variável do dia.</p>
+            
+            <label>Respiratório (PaO2/FiO2)</label>
+            <select id="sofa_resp" class="sel-sofa">
+                <option value="0">≥ 400</option>
+                <option value="1">< 400</option>
+                <option value="2">< 300</option>
+                <option value="3">< 200 (com suporte respiratório)</option>
+                <option value="4">< 100 (com suporte respiratório)</option>
+            </select>
+
+            <label>Coagulação (Plaquetas x10³/µL)</label>
+            <select id="sofa_coag" class="sel-sofa">
+                <option value="0">≥ 150</option>
+                <option value="1">< 150</option>
+                <option value="2">< 100</option>
+                <option value="3">< 50</option>
+                <option value="4">< 20</option>
+            </select>
+
+            <label>Fígado (Bilirrubina mg/dL)</label>
+            <select id="sofa_fig" class="sel-sofa">
+                <option value="0">< 1.2</option>
+                <option value="1">1.2 - 1.9</option>
+                <option value="2">2.0 - 5.9</option>
+                <option value="3">6.0 - 11.9</option>
+                <option value="4">> 12.0</option>
+            </select>
+
+            <label>Cardiovascular (PAM / DVA)</label>
+            <select id="sofa_cardio" class="sel-sofa">
+                <option value="0">PAM ≥ 70 mmHg</option>
+                <option value="1">PAM < 70 mmHg</option>
+                <option value="2">Dopamina ≤ 5 ou Dobutamina (qualquer dose)</option>
+                <option value="3">Dopamina > 5, Epi ≤ 0.1, Nora ≤ 0.1</option>
+                <option value="4">Dopamina > 15, Epi > 0.1, Nora > 0.1</option>
+            </select>
+
+            <label>SNC (Escala de Coma de Glasgow)</label>
+            <select id="sofa_snc" class="sel-sofa">
+                <option value="0">15</option>
+                <option value="1">13 - 14</option>
+                <option value="2">10 - 12</option>
+                <option value="3">6 - 9</option>
+                <option value="4">< 6</option>
+            </select>
+
+            <label>Renal (Creatinina ou Diurese)</label>
+            <select id="sofa_renal" class="sel-sofa">
+                <option value="0">Cr < 1.2</option>
+                <option value="1">Cr 1.2 - 1.9</option>
+                <option value="2">Cr 2.0 - 3.4</option>
+                <option value="3">Cr 3.5 - 4.9 ou Diurese < 500 mL/d</option>
+                <option value="4">Cr > 5.0 ou Diurese < 200 mL/d</option>
+            </select>
+
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularSOFA()">Calcular SOFA</button>
+            <div id="res_sofa" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
         </div>
     </div>
 
