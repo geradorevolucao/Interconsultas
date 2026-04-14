@@ -567,7 +567,58 @@
         </div>
     </div>
                 
-    <div id="screen-prescricoes" class="screen"><div class="placeholder-box"><h2>Prescrições</h2><p>Área em construção!</p></div></div>
+    <div id="screen-prescricoes" class="screen">
+        <div style="text-align: center; color: #7f8c8d; margin-top: 10px;">
+            <p>Selecione a categoria de prescrição:</p>
+        </div>
+        <div class="hub-grid">
+            <button class="hub-btn" onclick="navegar('screen-kits')" style="background-color: #e67e22;">📦 KITS PADRÃO<br><span style="font-size:11px;font-weight:normal;">Admissão, DPOC, CAD...</span></button>
+            <button class="hub-btn" onclick="navegar('screen-infusoes')" style="background-color: #d35400;">💧 INFUSÕES E DOSES<br><span style="font-size:11px;font-weight:normal;">DVA, Sedação, ATB...</span></button>
+        </div>
+    </div>
+
+    <div id="screen-kits" class="screen">
+        <div class="placeholder-box">
+            <h2>Kits de Prescrição</h2>
+            <p>Área em construção! Aqui ficarão as prescrições prontas para copiar e colar.</p>
+        </div>
+    </div>
+
+   <div id="screen-infusoes" class="screen">
+        <div class="card">
+            <h2>DVA: Noradrenalina</h2>
+            
+            <div class="row">
+                <div><label>Peso (kg)</label><input type="number" id="nora_peso" placeholder="kg"></div>
+                <div><label>Dose (mcg/kg/min)</label><input type="number" id="nora_dose" step="0.01" placeholder="Ex: 0.1"></div>
+            </div>
+
+            <label>Tipo de Diluição</label>
+            <select id="nora_tipo" onchange="toggleNoraDilu()">
+                <option value="padrao">Padrão: 5 amp + 180ml SF/SG5% (100 mcg/mL)</option>
+                <option value="custom">Personalizada (Ampolas + ML)</option>
+            </select>
+
+            <div id="nora_custom_fields" style="display:none; background:#f9f9f9; padding:10px; border-radius:8px; margin-top:10px; border:1px dashed #d35400;">
+                <div class="row">
+                    <div><label>Nº Ampolas (4mg/4ml)</label><input type="number" id="nora_amp" value="4"></div>
+                    <div><label>Volume Soros (mL)</label><input type="number" id="nora_vol" value="234"></div>
+                </div>
+            </div>
+
+            <button class="btn-gerar" style="background-color: #d35400; padding: 12px; margin-top: 16px;" onclick="calcularNoraAvancado()">Calcular Infusão</button>
+            
+            <div id="res_nora" class="resultado-calc" style="background-color: #fbeee6; color: #d35400;"></div>
+
+            <div id="info_nora" style="margin-top:15px; font-size:12px; display:none; border-top:1px solid #eee; padding-top:10px;">
+                <p><b>Concentração:</b> <span id="nora_conc_text">--</span> mcg/mL</p>
+                <p><b>Dose Recomendada:</b> 0.05 a 1.0 mcg/kg/min (titulável)</p>
+                <div id="nora_alert" style="font-weight:bold; margin-top:5px; padding:5px; border-radius:4px;"></div>
+            </div>
+        </div>
+        
+        </div>
+                
     <div id="screen-pendencias" class="screen"><div class="placeholder-box"><h2>Pendências</h2><p>Área em construção!</p></div></div>
 
     <div id="screen-evolucao" class="screen">
@@ -644,6 +695,8 @@
             'e-wellstvp': { titulo: 'Wells (TVP)', voltarPara: 'screen-escores' },
             'e-fick': { titulo: 'Débito Cardíaco (Fick)', voltarPara: 'screen-escores' },
             'screen-prescricoes': { titulo: 'Prescrições', voltarPara: 'screen-hub' },
+            'screen-kits': { titulo: 'Kits Padrão', voltarPara: 'screen-prescricoes' },
+            'screen-infusoes': { titulo: 'Infusões e Doses', voltarPara: 'screen-prescricoes' },
             'screen-pendencias': { titulo: 'Pendências', voltarPara: 'screen-hub' }
         };
 
@@ -911,7 +964,56 @@
             res.innerText = `Débito Cardíaco: ${dc.toFixed(2)} L/min\n(CaO2: ${cao2.toFixed(1)} mL/dL | CvO2: ${cvo2.toFixed(1)} mL/dL)`;
             res.style.display = 'block';
         }
+        function toggleNoraDilu() {
+            const tipo = document.getElementById('nora_tipo').value;
+            document.getElementById('nora_custom_fields').style.display = (tipo === 'custom') ? 'block' : 'none';
+        }
 
+        function calcularNoraAvancado() {
+            const peso = parseFloat(document.getElementById('nora_peso').value);
+            const dose = parseFloat(document.getElementById('nora_dose').value);
+            const tipo = document.getElementById('nora_tipo').value;
+            const res = document.getElementById('res_nora');
+            const info = document.getElementById('info_nora');
+            const alertBox = document.getElementById('nora_alert');
+
+            if(!peso || !dose) { alert("Preencha peso e dose."); return; }
+
+            let conc = 0;
+            if(tipo === 'padrao') {
+                // Padrão do Serviço: 5 amp (20mg/20ml) em 180ml de Soro = 200ml total
+                // 20.000 mcg / 200 ml = 100 mcg/mL
+                conc = 100; 
+            } else {
+                const amps = parseFloat(document.getElementById('nora_amp').value);
+                const volSoro = parseFloat(document.getElementById('nora_vol').value);
+                const totalVol = volSoro + (amps * 4); // Volume soro + volume das ampolas (4ml cada)
+                conc = (amps * 4000) / totalVol; // 4mg = 4000mcg
+            }
+
+            const mlh = (dose * peso * 60) / conc;
+            
+            // Exibir Resultados
+            res.innerText = `${mlh.toFixed(1)} mL/h`;
+            res.style.display = 'block';
+            
+            // Informações extras
+            info.style.display = 'block';
+            document.getElementById('nora_conc_text').innerText = conc.toFixed(1);
+
+            // Alertas de Segurança (Dose em mcg/kg/min)
+            if(dose < 0.05) {
+                alertBox.innerText = "⚠️ DOSE MUITO BAIXA: Considere desmame ou checar estabilidade.";
+                alertBox.style.backgroundColor = "#fff3cd"; alertBox.style.color = "#856404";
+            } else if(dose > 1.0) {
+                alertBox.innerText = "🚨 ALERTA: Dose alta (> 1.0 mcg/kg/min). Considerar associar Vasopressina ou Adrenalina.";
+                alertBox.style.backgroundColor = "#f8d7da"; alertBox.style.color = "#721c24";
+            } else {
+                alertBox.innerText = "✅ Dose dentro da faixa terapêutica usual.";
+                alertBox.style.backgroundColor = "#d4edda"; alertBox.style.color = "#155724";
+            }
+        }
+        
         function calcularTFG() { const age = parseFloat(document.getElementById('c_tfg_idade').value); const cr = parseFloat(document.getElementById('c_tfg_cr').value); const sex = document.getElementById('c_tfg_sexo').value; const resBox = document.getElementById('res_tfg'); if(!age || !cr) { resBox.innerText = "Preencha a Idade e a Creatinina."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const k = sex === 'F' ? 0.7 : 0.9; const alpha = sex === 'F' ? -0.241 : -0.302; const minCrK = Math.min(cr/k, 1); const maxCrK = Math.max(cr/k, 1); const femMul = sex === 'F' ? 1.012 : 1; const egfr = 142 * Math.pow(minCrK, alpha) * Math.pow(maxCrK, -1.200) * Math.pow(0.9938, age) * femMul; resBox.innerText = `TFG Estimada: ${egfr.toFixed(1)} mL/min/1.73m²`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
         function calcularAG() { const na = parseFloat(document.getElementById('c_ag_na').value); const cl = parseFloat(document.getElementById('c_ag_cl').value); const hco3 = parseFloat(document.getElementById('c_ag_hco3').value); const resBox = document.getElementById('res_ag'); if(isNaN(na) || isNaN(cl) || isNaN(hco3)) { resBox.innerText = "Preencha Na+, Cl- e Bicarbonato."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const ag = na - (cl + hco3); let diag = ag > 12 ? "(Aumentado)" : ag < 8 ? "(Reduzido)" : "(Normal)"; resBox.innerText = `Anion Gap: ${ag.toFixed(1)} mEq/L ${diag}`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
         function calcularOsm() { const na = parseFloat(document.getElementById('c_osm_na').value); const gli = parseFloat(document.getElementById('c_osm_gli').value); const ur = parseFloat(document.getElementById('c_osm_ur').value); const resBox = document.getElementById('res_osm'); if(isNaN(na) || isNaN(gli) || isNaN(ur)) { resBox.innerText = "Preencha Na+, Glicose e Ureia."; resBox.style.display = 'block'; resBox.style.color = '#e74c3c'; return; } const osm = (2 * na) + (gli / 18) + (ur / 6); let diag = osm > 295 ? "(Hiperosmolar)" : osm < 275 ? "(Hipo-osmolar)" : "(Normal)"; resBox.innerText = `Osmolalidade: ${osm.toFixed(1)} mOsm/kg ${diag}`; resBox.style.color = '#16a085'; resBox.style.display = 'block'; }
