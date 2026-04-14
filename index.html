@@ -131,8 +131,8 @@
             <button class="btn-escore pronto" onclick="navegar('e-wells')">Wells (TEP)</button>
             <button class="btn-escore pronto" onclick="navegar('e-pesi')">PESI</button>
             <button class="btn-escore pronto" onclick="navegar('e-camicu')">CAM-ICU</button>
-            <button class="btn-escore pronto" onclick="navegar('e-whaven')">West Haven</button>
-            <button class="btn-escore espera">Hunt Hess (Brevemente)</button>
+            <button class="btn-escore pronto" onclick="navegar('e-wellstvp')">Wells (TVP)</button>
+            <button class="btn-escore pronto" onclick="navegar('e-fick')">Débito Cardíaco</button>
         </div>
     </div>
 
@@ -519,23 +519,53 @@
             <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularCAM()">Avaliar CAM-ICU</button>
             <div id="res_cam" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
         </div>
+    </div> 
+<div id="e-wellstvp" class="screen">
+        <div class="card">
+            <h2>Escore de Wells (TVP)</h2>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Câncer ativo (tratamento em curso ou < 6 meses) (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Paralisia, paresia ou imobilização recente dos MMII (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Acamado > 3 dias ou cirurgia de grande porte (< 12 sem) (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Dor/sensibilidade ao longo do sistema venoso profundo (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Edema de todo o membro inferior (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Edema da panturrilha > 3cm maior que o lado assintomático (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Edema depressível (godet) restrito ao lado sintomático (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Veias superficiais colaterais (não varicosas) (+1)</label>
+                <label style="font-weight:normal; margin:0;"><input type="checkbox" class="cb-wellstvp" value="1"> Episódio prévio de TVP documentada (+1)</label>
+                <label style="font-weight:normal; margin:0; color: #c0392b;"><input type="checkbox" class="cb-wellstvp" value="-2"> Diagnóstico alternativo MAIS provável que TVP (-2)</label>
+            </div>
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularWellsTVP()">Calcular Wells (TVP)</button>
+            <div id="res_wellstvp" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+        </div>
     </div>
 
-    <div id="e-whaven" class="screen">
+    <div id="e-fick" class="screen">
         <div class="card">
-            <h2>Critérios de West Haven (Encefalopatia Hepática)</h2>
-            <label>Estado Clínico do Paciente</label>
-            <select id="s_whaven" style="margin-top: 10px;">
-                <option value="0">Grau 0 - Sem alterações detetáveis</option>
-                <option value="1">Grau 1 - Euforia/Ansiedade, desatenção, bradipsiquia</option>
-                <option value="2">Grau 2 - Letargia, apatia, desorientação temporal, asterixe</option>
-                <option value="3">Grau 3 - Somnolência marcada, desorientação espacial, agressividade</option>
-                <option value="4">Grau 4 - Coma</option>
-            </select>
-            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularWestHaven()">Avaliar Grau</button>
-            <div id="res_wh" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
+            <h2>Débito Cardíaco (Fórmula de Fick)</h2>
+            <p style="font-size: 13px; color: #666;">Cálculo invasivo baseado no consumo de oxigênio.</p>
+            
+            <label>Consumo de O2 - VO2 (mL/min)</label>
+            <input type="number" id="fick_vo2" placeholder="Ex: 250 (Padrão/Estimado)">
+            
+            <label>Hemoglobina (g/dL)</label>
+            <input type="number" id="fick_hb" placeholder="Ex: 12.5" step="0.1">
+            
+            <div class="row">
+                <div>
+                    <label>SaO2 - Arterial (%)</label>
+                    <input type="number" id="fick_sao2" placeholder="Ex: 98">
+                </div>
+                <div>
+                    <label>SvO2 - Venosa Mista (%)</label>
+                    <input type="number" id="fick_svo2" placeholder="Ex: 70">
+                </div>
+            </div>
+
+            <button class="btn-gerar" style="background-color: #c0392b; padding: 12px; margin-top: 16px;" onclick="calcularFick()">Calcular Débito Cardíaco</button>
+            <div id="res_fick" class="resultado-calc" style="background-color: #fdedec; color: #c0392b;"></div>
         </div>
-    </div>   
+    </div>
                 
     <div id="screen-prescricoes" class="screen"><div class="placeholder-box"><h2>Prescrições</h2><p>Área em construção!</p></div></div>
     <div id="screen-pendencias" class="screen"><div class="placeholder-box"><h2>Pendências</h2><p>Área em construção!</p></div></div>
@@ -611,7 +641,8 @@
             'e-wells': { titulo: 'Wells (TEP)', voltarPara: 'screen-escores' },
             'e-pesi': { titulo: 'Escore PESI', voltarPara: 'screen-escores' },
             'e-camicu': { titulo: 'CAM-ICU', voltarPara: 'screen-escores' },
-            'e-whaven': { titulo: 'West Haven', voltarPara: 'screen-escores' },
+            'e-wellstvp': { titulo: 'Wells (TVP)', voltarPara: 'screen-escores' },
+            'e-fick': { titulo: 'Débito Cardíaco (Fick)', voltarPara: 'screen-escores' },
             'screen-prescricoes': { titulo: 'Prescrições', voltarPara: 'screen-hub' },
             'screen-pendencias': { titulo: 'Pendências', voltarPara: 'screen-hub' }
         };
@@ -840,10 +871,44 @@
             res.style.display = 'block';
         }
 
-        function calcularWestHaven() {
-            const val = document.getElementById('s_whaven').value;
-            const res = document.getElementById('res_wh');
-            res.innerText = `Encefalopatia Hepática: ${val}\n(Segundo Critérios de West Haven)`;
+     function calcularWellsTVP() {
+            const checkboxes = document.querySelectorAll('.cb-wellstvp:checked');
+            let pontos = 0;
+            checkboxes.forEach(cb => pontos += parseFloat(cb.value));
+            const res = document.getElementById('res_wellstvp');
+            
+            // Diretriz moderna (2 níveis): Alta x Baixa probabilidade
+            let probabilidade = pontos >= 2 ? "Alta Probabilidade (TVP Provável).\nIndicação de USG Doppler de MMII." : "Baixa Probabilidade (TVP Improvável).\nConsiderar D-Dímero.";
+            res.innerText = `Escore de Wells (TVP): ${pontos} pontos\n${probabilidade}`;
+            res.style.display = 'block';
+        }
+
+        function calcularFick() {
+            const vo2 = parseFloat(document.getElementById('fick_vo2').value);
+            const hb = parseFloat(document.getElementById('fick_hb').value);
+            const saO2 = parseFloat(document.getElementById('fick_sao2').value) / 100;
+            const svO2 = parseFloat(document.getElementById('fick_svo2').value) / 100;
+            const res = document.getElementById('res_fick');
+
+            if(!vo2 || !hb || !saO2 || !svO2) {
+                res.innerText = "Preencha todos os parâmetros, incluindo VO2 estimado.";
+                res.style.display = 'block'; return;
+            }
+
+            // Fórmulas de conteúdo de oxigênio (constante de Hüfner = 1.34)
+            const cao2 = 1.34 * hb * saO2;
+            const cvo2 = 1.34 * hb * svO2;
+            const avDiff = cao2 - cvo2;
+            
+            if (avDiff <= 0) {
+                 res.innerText = "Valores inválidos: O conteúdo venoso de O2 não pode ser maior ou igual ao arterial.";
+                 res.style.display = 'block'; return;
+            }
+
+            // DC = VO2 / (CaO2 - CvO2) * 10
+            const dc = vo2 / (avDiff * 10);
+            
+            res.innerText = `Débito Cardíaco: ${dc.toFixed(2)} L/min\n(CaO2: ${cao2.toFixed(1)} mL/dL | CvO2: ${cvo2.toFixed(1)} mL/dL)`;
             res.style.display = 'block';
         }
 
