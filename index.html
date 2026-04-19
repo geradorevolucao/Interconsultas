@@ -643,6 +643,36 @@
                 <div id="nora_alert" style="font-weight:bold; margin-top:5px; padding:5px; border-radius:4px;"></div>
             </div>
         </div>
+       
+       <div class="card">
+            <h2>DVA: Dobutamina</h2>
+            <div class="row">
+                <div><label>Peso (kg)</label><input type="number" id="dobuta_peso" placeholder="kg"></div>
+                <div><label>Dose (mcg/kg/min)</label><input type="number" id="dobuta_dose" step="0.1" placeholder="Ex: 5.0"></div>
+            </div>
+
+            <label>Tipo de Diluição</label>
+            <select id="dobuta_tipo" onchange="toggleDobutaDilu()">
+                <option value="padrao">Padrão: 4 amp + 170ml SF (4.000 mcg/mL)</option>
+                <option value="custom">Personalizada (Ampolas + ML)</option>
+            </select>
+
+            <div id="dobuta_custom_fields" style="display:none; background:#f9f9f9; padding:10px; border-radius:8px; margin-top:10px; border:1px dashed #d35400;">
+                <div class="row">
+                    <div><label>Nº Ampolas (250mg/20ml)</label><input type="number" id="dobuta_amp" value="4"></div>
+                    <div><label>Volume Soros (mL)</label><input type="number" id="dobuta_vol" value="170"></div>
+                </div>
+            </div>
+
+            <button class="btn-gerar" style="background-color: #d35400; padding: 12px; margin-top: 16px;" onclick="calcularDobutaAvancado()">Calcular Infusão</button>
+            <div id="res_dobuta" class="resultado-calc" style="background-color: #fbeee6; color: #d35400;"></div>
+
+            <div id="info_dobuta" style="margin-top:15px; font-size:12px; display:none; border-top:1px solid #eee; padding-top:10px;">
+                <p><b>Concentração:</b> <span id="dobuta_conc_text">--</span> mcg/mL</p>
+                <p><b>Dose Recomendada:</b> 2.5 a 20.0 mcg/kg/min</p>
+                <div id="dobuta_alert" style="font-weight:bold; margin-top:5px; padding:5px; border-radius:4px;"></div>
+            </div>
+        </div>
         
         </div>
                 
@@ -1003,15 +1033,18 @@
             tabela.innerHTML = "";
 
             // Banco de Dados das Diluições Padrão (Vamos ajustar com as suas!)
+           // Banco de Dados das Diluições Padrão (Calibrado com seu serviço)
             const drogas = [
-                // DVAs (Dose em mcg/kg/min)
-                { nome: "Noradrenalina", padrao: "5 amp + 180ml SG5% (100 mcg/mL)", min: 0.05, max: 1.0, unidade: "mcg/kg/min", calc: (d,p) => (d * p * 60) / 100 },
-                { nome: "Dobutamina", padrao: "1 amp + 230ml SG5% (1000 mcg/mL)", min: 2.5, max: 20.0, unidade: "mcg/kg/min", calc: (d,p) => (d * p * 60) / 1000 },
+                // DVA: Noradrenalina (100 mcg/mL)
+                { nome: "Noradrenalina", padrao: "5 amp + 180ml (100 mcg/mL)", min: 0.05, max: 1.0, unidade: "mcg/kg/min", calc: (d,p) => (d * p * 60) / 100 },
                 
-                // Sedoanalgesia (Dose em mcg/kg/h ou mg/kg/h)
-                { nome: "Fentanil", padrao: "2 amp + 80ml SF (10 mcg/mL)", min: 0.5, max: 3.0, unidade: "mcg/kg/h", calc: (d,p) => (d * p) / 10 },
+                // DVA: Dobutamina (4.000 mcg/mL)
+                { nome: "Dobutamina", padrao: "4 amp + 170ml (4.000 mcg/mL)", min: 2.5, max: 20.0, unidade: "mcg/kg/min", calc: (d,p) => (d * p * 60) / 4000 },
+                
+                // Sedoanalgesia (Mantendo padrões sugeridos até você informar os seus)
+                { nome: "Fentanil", padrao: "2 amp + 80ml SF (10 mcg/mL)", min: 1.0, max: 3.0, unidade: "mcg/kg/h", calc: (d,p) => (d * p) / 10 },
                 { nome: "Midazolam", padrao: "3 amp + 85ml SF (0.45 mg/mL)", min: 0.05, max: 0.2, unidade: "mg/kg/h", calc: (d,p) => (d * p) / 0.45 },
-                { nome: "Propofol a 1%", padrao: "Puro (10 mg/mL)", min: 0.3, max: 3.0, unidade: "mg/kg/h", calc: (d,p) => (d * p) / 10 }
+                { nome: "Propofol 1%", padrao: "Puro (10 mg/mL)", min: 0.3, max: 3.0, unidade: "mg/kg/h", calc: (d,p) => (d * p) / 10 }
             ];
 
             drogas.forEach(dr => {
@@ -1053,6 +1086,48 @@
                 const totalVol = volSoro + (amps * 4); // Volume soro + volume das ampolas (4ml cada)
                 conc = (amps * 4000) / totalVol; // 4mg = 4000mcg
             }
+            function toggleDobutaDilu() {
+            const tipo = document.getElementById('dobuta_tipo').value;
+            document.getElementById('dobuta_custom_fields').style.display = (tipo === 'custom') ? 'block' : 'none';
+        }
+
+        function calcularDobutaAvancado() {
+            const peso = parseFloat(document.getElementById('dobuta_peso').value);
+            const dose = parseFloat(document.getElementById('dobuta_dose').value);
+            const tipo = document.getElementById('dobuta_tipo').value;
+            const res = document.getElementById('res_dobuta');
+            const info = document.getElementById('info_dobuta');
+            const alertBox = document.getElementById('dobuta_alert');
+
+            if(!peso || !dose) { alert("Preencha peso e dose."); return; }
+
+            let conc = 0;
+            if(tipo === 'padrao') {
+                conc = 4000; 
+            } else {
+                const amps = parseFloat(document.getElementById('dobuta_amp').value);
+                const volSoro = parseFloat(document.getElementById('dobuta_vol').value);
+                const totalVol = volSoro + (amps * 20); // 20ml por ampola
+                conc = (amps * 250000) / totalVol; // 250mg = 250.000mcg
+            }
+
+            const mlh = (dose * peso * 60) / conc;
+            res.innerText = `${mlh.toFixed(1)} mL/h`;
+            res.style.display = 'block';
+            info.style.display = 'block';
+            document.getElementById('dobuta_conc_text').innerText = conc.toFixed(1);
+
+            if(dose < 2.5) {
+                alertBox.innerText = "⚠️ DOSE SUBTERAPÊUTICA: Avalie necessidade clínica.";
+                alertBox.style.backgroundColor = "#fff3cd"; alertBox.style.color = "#856404";
+            } else if(dose > 20.0) {
+                alertBox.innerText = "🚨 ALERTA: Dose alta. Risco de taquiarritmias e aumento do consumo de O2.";
+                alertBox.style.backgroundColor = "#f8d7da"; alertBox.style.color = "#721c24";
+            } else {
+                alertBox.innerText = "✅ Dose dentro da faixa inotrópica usual.";
+                alertBox.style.backgroundColor = "#d4edda"; alertBox.style.color = "#155724";
+            }
+        }
 
             const mlh = (dose * peso * 60) / conc;
             
