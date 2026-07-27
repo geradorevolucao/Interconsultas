@@ -1,0 +1,22 @@
+{
+  "name": "Meu Hub Médico",
+  "short_name": "Hub Médico",
+  "description": "Prontuário, Calculadoras e Escores Clínicos",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#eef2f5",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icone.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icone.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
